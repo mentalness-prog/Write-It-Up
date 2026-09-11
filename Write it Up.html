@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Handwriting Quest / مغامرة الخط / L'Aventure de l'Écriture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@500;700&family=Playwrite+US+Modern&family=Playwrite+FR+Trad&display=swap" rel="stylesheet">
+<link rel="icon" id="favicon" href="">
+<style>
+  :root{
+    --paper:#FFF9F0;
+    --paper-deep:#FFE9CC;
+    --ink:#2E2150;
+    --teal:#00D9B8;
+    --teal-deep:#00A88F;
+    --coral:#FF5C8A;
+    --coral-deep:#E13F6C;
+    --gold:#FFB627;
+    --moss:#1FD980;
+    --line:#FFC2E0;
+    --white:#FFFFFF;
+    --sky:#2EC4F1;
+    --grape:#8B5CF6;
+    --sun:#FFD93D;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:
+      radial-gradient(circle at 6% 10%, rgba(46,196,241,0.55), transparent 30%),
+      radial-gradient(circle at 94% 8%, rgba(255,217,61,0.55), transparent 30%),
+      radial-gradient(circle at 8% 90%, rgba(31,217,128,0.45), transparent 32%),
+      radial-gradient(circle at 92% 92%, rgba(255,92,138,0.45), transparent 32%),
+      radial-gradient(circle at 50% 45%, rgba(139,92,246,0.18), transparent 45%),
+      linear-gradient(180deg, #FFFBF2, #FFF3FA);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Nunito',sans-serif;
+    min-height:100%;
+    overflow-x:hidden;
+  }
+  body[dir="rtl"] .stage{ text-align:right; }
+  h1,h2,h3,.display{ font-family:'Baloo 2','Nunito',sans-serif; }
+  [lang="ar"], .arabic-text{ font-family:'Noto Naskh Arabic','Baloo 2',sans-serif; }
+
+  .app{ max-width:920px; margin:0 auto; padding:18px 16px 60px; }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    flex-wrap:wrap; margin-bottom:14px;
+    position:sticky; top:8px; z-index:50;
+    background:rgba(255,255,255,0.9); backdrop-filter:blur(6px);
+    border-radius:16px; padding:8px 10px; border:2px solid var(--ink);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:44px;height:44px;border-radius:50%; background:linear-gradient(135deg, var(--sky), var(--grape)); color:var(--white);
+    display:flex;align-items:center;justify-content:center;font-size:22px; flex-shrink:0; overflow:hidden;
+    box-shadow:0 3px 0 var(--teal-deep);
+  }
+  .brand-mark img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .welcome-logo{
+    width:104px; height:104px; border-radius:50%; margin:0 auto 14px; display:block;
+    box-shadow:0 5px 0 var(--teal-deep); border:3px solid var(--white); outline:2px solid var(--teal);
+  }
+  .brand-title{ font-weight:700; font-size:1.15rem; line-height:1.1; }
+  .brand-sub{ font-size:.78rem; opacity:.65; font-weight:600; }
+
+  .top-controls{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .lang-switch{ display:flex; border:2px solid var(--ink); border-radius:999px; overflow:hidden; }
+  .lang-switch button{
+    border:none; background:var(--white); color:var(--ink); padding:7px 13px; font-weight:700;
+    cursor:pointer; font-size:.82rem; font-family:'Nunito',sans-serif;
+  }
+  .lang-switch button.active{ background:linear-gradient(135deg, var(--grape), var(--sky)); color:var(--white); }
+  .stars-pill{
+    display:flex; align-items:center; gap:5px; background:linear-gradient(135deg,#FFF3D6,#FFE29B); border:2px solid var(--gold);
+    border-radius:999px; padding:6px 13px; font-weight:800; font-size:.88rem;
+  }
+  .icon-btn{
+    background:var(--white); border:2px solid var(--ink); border-radius:999px; width:38px;height:38px;
+    display:flex;align-items:center;justify-content:center; cursor:pointer; font-size:1rem;
+    padding:0; font-family:inherit;
+  }
+
+  /* ---------- Stage card ---------- */
+  .stage{
+    background:var(--white); border:2px solid var(--ink); border-radius:22px; padding:26px 22px 22px;
+    box-shadow:0 6px 0 rgba(46,33,80,0.15);
+    position:relative; overflow:hidden;
+  }
+  .stage::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:8px;
+    background:linear-gradient(90deg, var(--sky), var(--sun), var(--moss), var(--coral), var(--grape));
+  }
+  .eyebrow-free{ font-size:.8rem; font-weight:700; color:var(--teal-deep); margin:0 0 4px; }
+  .stage h2{ margin:0 0 6px; font-size:1.5rem; }
+  .stage p.lead{ margin:0 0 16px; opacity:.75; font-size:.95rem; line-height:1.5;}
+
+  /* ---------- Onboarding ---------- */
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-weight:700; margin-bottom:6px; font-size:.9rem; }
+  .field input[type=text]{
+    width:100%; padding:11px 14px; border-radius:12px; border:2px solid var(--line);
+    font-size:1rem; font-family:inherit; background:var(--paper);
+  }
+  .field input[type=text]:focus{ outline:3px solid var(--gold); border-color:var(--teal); }
+  .pickrow{ display:flex; gap:10px; flex-wrap:wrap; }
+  .pickcard{
+    flex:1; min-width:120px; border:2px solid var(--line); border-radius:14px; padding:12px;
+    cursor:pointer; background:var(--paper); text-align:center; transition:transform .1s;
+  }
+  .pickcard:hover{ transform:translateY(-2px); }
+  .pickcard.selected{ border-color:var(--teal); background:#DFFAF3; box-shadow:0 3px 0 var(--teal);}
+  .pickcard .em{ font-size:1.6rem; display:block; margin-bottom:4px; }
+  .avatar-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .avatar-choice{
+    width:52px;height:52px;border-radius:50%; border:2px solid var(--line); background:var(--paper);
+    font-size:1.4rem; display:flex;align-items:center;justify-content:center; cursor:pointer;
+  }
+  .avatar-choice.selected{ border-color:var(--coral); background:#FFDCE8; box-shadow:0 0 0 3px rgba(255,92,138,.3); }
+
+  .btn{
+    border:none; border-radius:14px; padding:12px 20px; font-weight:800; font-size:.95rem;
+    cursor:pointer; font-family:'Nunito',sans-serif;
+  }
+  .btn-primary{ background:linear-gradient(135deg, var(--coral), #FF9152); color:var(--white); box-shadow:0 4px 0 var(--coral-deep); }
+  .btn-primary:active{ transform:translateY(3px); box-shadow:none; }
+  .btn-secondary{ background:var(--paper); color:var(--ink); border:2px solid var(--sky); box-shadow:0 3px 0 #1B9FCC; }
+  .btn-ghost{ background:transparent; color:var(--teal-deep); border:2px solid var(--teal-deep); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+
+  /* ---------- Map / hub ---------- */
+  .map-wrap{ position:relative; padding:10px 4px 4px; }
+  .path-svg{ width:100%; height:auto; display:block; }
+  .islands{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin-top:6px; }
+  .island{
+    border:2px solid var(--line); border-radius:16px; padding:14px; background:var(--paper);
+    display:flex; flex-direction:column; gap:6px; position:relative;
+  }
+  .island.locked{ opacity:.55; }
+  .island .isle-icon{ font-size:1.8rem; }
+  .island h3{ margin:2px 0 0; font-size:1.05rem; }
+  .island .isle-desc{ font-size:.78rem; opacity:.7; min-height:32px; }
+  .progress-bar{ height:9px; background:var(--line); border-radius:999px; overflow:hidden; }
+  .progress-bar > div{ height:100%; background:var(--moss); }
+  .lock-badge{ position:absolute; top:10px; inset-inline-end:12px; font-size:1rem; }
+
+  .badge-shelf{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .badge-chip{
+    background:#fff3da; border:2px solid var(--gold); border-radius:999px; padding:5px 12px;
+    font-size:.78rem; font-weight:700; display:flex; align-items:center; gap:5px;
+  }
+
+  /* ---------- Level list ---------- */
+  .level-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px; margin:14px 0; }
+  .level-btn{
+    border:2px solid var(--sky); background:#EAF8FF; border-radius:12px; padding:10px 6px;
+    font-family:inherit; font-weight:800; cursor:pointer; font-size:1rem; text-align:center;
+  }
+  .level-btn .lvl-stars{ display:block; font-size:.7rem; margin-top:3px; color:#C98A00; font-weight:700;}
+  .level-btn.done{ border-color:var(--moss); background:#DEFCEE; }
+  .level-btn.active{ border-color:var(--coral); box-shadow:0 0 0 3px rgba(255,92,138,.25); }
+
+  .custom-box{ display:flex; gap:8px; margin:10px 0 4px; flex-wrap:wrap; }
+  .custom-box input{ flex:1; min-width:160px; padding:10px 12px; border-radius:10px; border:2px solid var(--line); font-size:1.05rem; }
+
+  /* ---------- Canvas trace area ---------- */
+  .canvas-wrap{
+    position:relative; border:2px dashed var(--line); border-radius:16px; background:repeating-linear-gradient(
+      to bottom, transparent 0 39px, rgba(42,33,24,.08) 39px 41px
+    ), var(--white);
+    touch-action:none; overflow:hidden; margin-top:8px;
+  }
+  canvas{ display:block; width:100%; touch-action:none; }
+  .canvas-layer{ position:absolute; inset:0; }
+
+  .tools{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:12px; }
+  .tool{ display:flex; flex-direction:column; gap:4px; font-size:.78rem; font-weight:700; min-width:130px; }
+  .tool input[type=range]{ width:100%; }
+
+  .feedback-banner{
+    margin-top:14px; padding:14px 16px; border-radius:14px; font-weight:700; font-size:.95rem;
+    display:none; align-items:center; gap:10px;
+  }
+  .feedback-banner.show{ display:flex; }
+  .fb-great{ background:#e6f2e3; border:2px solid var(--moss); color:#2d4025; }
+  .fb-ok{ background:#fdf3dc; border:2px solid var(--gold); color:#5c4816; }
+  .fb-retry{ background:#fdece7; border:2px solid var(--coral); color:#7a3524; }
+  .stars-earned{ font-size:1.2rem; letter-spacing:2px; }
+
+  .warmup-legend{ font-size:.82rem; opacity:.7; margin-top:6px; }
+
+  footer.note{ text-align:center; font-size:.72rem; opacity:.55; margin-top:26px; line-height:1.5; }
+
+  @media (max-width:520px){
+    .stage{ padding:16px; border-radius:16px; }
+    .brand-title{ font-size:1rem; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  button:focus-visible, .island:focus-visible, .pickcard:focus-visible, .avatar-choice:focus-visible, [role="button"]:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--grape); outline-offset:2px;
+  }
+
+  /* ---------- Print Studio ---------- */
+  .print-controls .lang-switch{ margin:6px 0 14px; }
+  .check-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; margin:10px 0; }
+  .check-item{ display:flex; align-items:center; gap:6px; border:2px solid var(--line); border-radius:10px; padding:8px 10px; font-weight:700; font-size:.85rem; cursor:pointer; background:var(--paper); }
+  .check-item input{ width:16px;height:16px; }
+  textarea#printCustom{ width:100%; min-height:70px; padding:10px 12px; border-radius:10px; border:2px solid var(--line); font-family:inherit; font-size:.95rem; }
+  #printWrapper{ display:none; }
+  .worksheet-page{ padding:14px 4px; }
+  .worksheet-page h2{ font-family:'Baloo 2',sans-serif; margin:0 0 4px; }
+  .worksheet-page .ws-sub{ font-size:.85rem; opacity:.65; margin:0 0 18px; }
+  .ws-row{ margin-bottom:26px; }
+  .ws-row .ws-line{
+    border-bottom:1.5px solid #333; position:relative; padding:14px 4px 16px;
+    font-size:2rem; line-height:1.5; white-space:normal; overflow:visible;
+    display:flex; flex-wrap:wrap; gap:22px; align-items:baseline;
+  }
+  .ws-row .ws-line::after{ content:""; position:absolute; left:0; right:0; top:44%; border-top:1px dashed #bbb; }
+  .ws-model{ color:#111; font-weight:800; position:relative; z-index:1; }
+  .ws-ghost{ color:#bbb; font-weight:700; position:relative; z-index:1; }
+  .ws-blank-line{ border-bottom:1.5px solid #333; height:52px; position:relative; margin-bottom:22px; }
+  .ws-blank-line::after{ content:""; position:absolute; left:0; right:0; top:50%; border-top:1px dashed #bbb; }
+  @media print{
+    body > *:not(#printWrapper){ display:none !important; }
+    body{ background:#fff !important; }
+    #printWrapper{ display:block !important; }
+    @page{ margin:16mm; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="printWrapper"></div>
+
+<script>
+/* =====================================================================
+   TRILINGUAL HANDWRITING QUEST
+   A hybrid canvas-tracing game teaching real handwriting motor control
+   in Arabic, French and English, ages 8-14.
+   ===================================================================== */
+
+/* ---------------- i18n ---------------- */
+const STR = {
+en:{ dir:"ltr", appTitle:"Handwriting Quest", appSub:"Trace. Earn stars. Level up your handwriting.",
+  onboardTitle:"Let's get you set up", onboardLead:"This takes 20 seconds. You can change anything later.",
+  nameLabel:"What should we call you?", namePh:"Type your name",
+  avatarLabel:"Pick your explorer",
+  profilePickerTitle:"Who's practicing today?", profilePickerDesc:"Pick your name, or add a new learner to this device.",
+  addLearner:"Add another learner", switchLearner:"Switch learner",
+  groupMode:"Group Mode", groupModeDesc:"Take turns with 2–4 learners on the same device.",
+  groupNeedTwo:"Add at least one more learner profile to use Group Mode.",
+  groupSetupTitle:"Who's playing?", groupPickLearners:"Pick 2–4 learners:",
+  groupPickActivity:"Choose what to practice:", groupStartBtn:"Start the round",
+  groupTurnPrompt:name=>`${name}'s turn!`, groupPassPrompt:"Pass the device, then tap Ready.",
+  groupReadyBtn:"I'm ready — go!", groupNextBtn:"Next player", groupSeeResultsBtn:"See results",
+  groupResultsTitle:"Great round, team!", groupTeamStars:"Team stars this round",
+  groupPlayAgainBtn:"Play again", groupBackBtn:"Back to map",
+  groupTypeLetters:"Letters", groupTypeNumbers:"Numbers", groupTypeWords:"Words", groupTypeSentences:"Sentences", groupTypeWarmup:"Warm-Up",
+  ageLabel:"How old are you?",
+  tierA:"8–10", tierB:"11–12", tierC:"13–14",
+  handLabel:"Which hand do you write with?", leftH:"Left hand", rightH:"Right hand",
+  startBtn:"Start my quest",
+  hubGreeting:name=>`Welcome back, ${name}!`,
+  hubLead:"Pick an island to practice on. Finish enough quests to unlock the next one.",
+  islandWarmup:"Warm-Up Cove", islandWarmupDesc:"Loosen up your hand with fun line patterns.",
+  islandLetters:"Letter Harbor", islandLettersDesc:"Trace single letters until they feel easy.",
+  islandWords:"Word Bay", islandWordsDesc:"Put letters together into whole words.",
+  islandSentences:"Sentence Summit", islandSentencesDesc:"Write full sentences like a pro.",
+  islandNumbers:"Number Nook", islandNumbersDesc:"Trace digits, then bigger numbers.",
+  locked:"Locked", unlockHint:n=>`Earn ${n} more ★ to unlock`,
+  freePractice:"Free Practice", freePracticeDesc:"Type any word or sentence and trace it.",
+  back:"Back to map", pickLevel:"Choose something to trace:",
+  customLabel:"Or type your own word/sentence:", customPh:"Type anything…", customGo:"Trace it",
+  showGuide:"Guide strength", penSize:"Pen thickness", clearBtn:"Clear", checkBtn:"Check my writing",
+  nextBtn:"Next one", tryAgainBtn:"Try again",
+  fbGreat:"Amazing tracing! Your hand control is really improving.",
+  fbOk:"Nice work — you're staying close to the lines. One more try for a perfect score?",
+  fbRetry:"Good start! Slow down a little and follow the light guide lines closely.",
+  starsLabel:"stars",
+  badgeWarmup:"Warm-Up Champion", badgeLetters:"Alphabet Explorer", badgeWords:"Word Builder",
+  badgeSentences:"Sentence Master", badgeTri:"Trilingual Trekker", badgeStreak:"3-Day Streak", badgeMemory:"Memory Master",
+  badgeNumbers:"Number Ninja",
+  yourBadges:"Your badges",
+  warmupInstruction:"Trace slowly along the light road, staying inside it from start to end.",
+  patternWave:"Wavy Road", patternZig:"Zig-Zag Road", patternLoop:"Loopy Road", patternDiag:"Slanted Road",
+  patternCircle:"Circle Road", patternBridge:"Bumpy Bridges",
+  settings:"Settings", closeSettings:"Done",
+  islandMemory:"Memory Bay", islandMemoryDesc:"Look, cover, write from memory, then check.",
+  memoryLook:"Look carefully and remember it!", memoryReady:"I'm ready — hide it!",
+  memoryWritePrompt:"Now write it from memory", memoryReveal:"The word was:",
+  precisionBasic:"Basic", precisionAdvanced:"Precision", precisionHint:"Precision mode uses a thinner road and stricter scoring.",
+  printStudio:"Print Practice Sheets", printStudioDesc:"Make real paper worksheets for pen-and-paper practice.",
+  printPickType:"What should the sheet include?", printPickItems:"Pick items to include:",
+  printSelectAll:"Select all", printGenerate:"Generate worksheet", printNow:"Print", printBackToBuilder:"Edit selection",
+  printCustomLabel:"Add your own words or letters (one per line):", printCustomPh:"e.g. one word per line",
+  printTitle:"Handwriting Practice Sheet",
+  printReport:"Progress Report", printReportBtn:"Generate report",
+  reportSubtitle:"Handwriting Progress Report", reportDate:"Date", reportStars:"Total stars",
+  reportStreak:"Day streak", reportChapterProgress:"Progress by activity", reportBadges:"Badges earned",
+  reportNone:"None yet", reportSignature:"Instructor / Parent signature",
+  instructors:"For Instructors", instructorsIntro:"A quick guide to how this tool works and why, so you can use it with confidence in a classroom or at home.",
+  instructorsPedagogyTitle:"How it's designed",
+  instructorsPedagogy:["Warm-Up Cove uses classic pre-writing motor patterns (waves, zigzags, loops, circles) before any letters — standard occupational-therapy sequencing.","Letters, Numbers, Words and Sentences follow a deliberate progression from single symbols to full sentences.","Memory Bay uses Look–Cover–Write–Check, a research-backed method for building recall instead of copy-dependence.","The guide-strength slider lets a learner fade support gradually instead of relying on a visible outline forever."],
+  instructorsScoringTitle:"How scoring works",
+  instructorsScoring:"Each attempt is compared to the real letterform, checking both how much of the target was traced (coverage) and how much ink strayed outside it (control). Difficulty is tuned by age tier — younger learners get more tolerance, older learners are held to a tighter line.",
+  instructorsTierTitle:"Age tiers",
+  instructorsTier:"Tiers roughly track early-elementary (8–10), upper-elementary (11–12), and middle-school (13–14) expectations. Content length and required accuracy both increase with tier — a teacher can also just pick whichever tier matches a learner's actual skill, regardless of age.",
+  instructorsPrivacyTitle:"Data & privacy",
+  instructorsPrivacy:"Progress is saved to the learner's own account only. Nothing is shared with other users, and there's no ad content or tracking.",
+  instructorsClassroomTitle:"Suggested classroom use",
+  instructorsClassroom:"5–10 minutes as a warm-up before writing tasks, or as a rotation station. Free Practice lets you assign the exact spelling words or sentences you're already teaching.",
+  footerPrivacyLink:"Privacy & Terms",
+  privacyTitle:"Privacy & Terms", privacyDisclaimer:"⚠️ This is a plain-language draft, not a legal document. Have a lawyer review and adapt it — especially the children's-data section — for your country before using it commercially.",
+  privacyWhatTitle:"What this app stores", privacyWhat:"A learner's name, chosen avatar, language and age-tier settings, and practice progress (stars, badges, streak). This is stored under the account used to access the app. There is no advertising and nothing is sold to third parties.",
+  privacyChildrenTitle:"If learners are children", privacyChildren:"This app is commonly used by children with a parent's or teacher's help. Sellers offering this to families or schools should review applicable children's-privacy law in their market (for example COPPA in the United States, or GDPR-K provisions in the EU/UK) before launch, and add any required consent or disclosure steps.",
+  privacyControlTitle:"Multiple learners, one device", privacyControl:"A single device can hold separate profiles for several learners (e.g. siblings or a classroom tablet used in rotation). Progress does not sync across different devices in this version.",
+  privacyContactTitle:"Contact", privacyContact:"Replace this line with your support email or business contact before publishing.",
+  encouragements:["Great focus!","Look at that steady hand!","You're getting stronger every try!","Keep that pace — nice and slow.","Your lines are getting smoother!"]
+},
+fr:{ dir:"ltr", appTitle:"L'Aventure de l'Écriture", appSub:"Trace. Gagne des étoiles. Améliore ton écriture.",
+  onboardTitle:"Installons ton profil", onboardLead:"Ça prend 20 secondes. Tu pourras tout changer plus tard.",
+  nameLabel:"Comment dois-je t'appeler ?", namePh:"Écris ton prénom",
+  avatarLabel:"Choisis ton explorateur",
+  profilePickerTitle:"Qui s'entraîne aujourd'hui ?", profilePickerDesc:"Choisis ton nom, ou ajoute un nouvel apprenant sur cet appareil.",
+  addLearner:"Ajouter un apprenant", switchLearner:"Changer d'apprenant",
+  groupMode:"Mode Groupe", groupModeDesc:"Joue à tour de rôle avec 2 à 4 apprenants sur le même appareil.",
+  groupNeedTwo:"Ajoute au moins un autre profil d'apprenant pour utiliser le Mode Groupe.",
+  groupSetupTitle:"Qui joue ?", groupPickLearners:"Choisis 2 à 4 apprenants :",
+  groupPickActivity:"Choisis ce que vous allez pratiquer :", groupStartBtn:"Commencer la manche",
+  groupTurnPrompt:name=>`À toi, ${name} !`, groupPassPrompt:"Passe l'appareil, puis appuie sur Prêt.",
+  groupReadyBtn:"Je suis prêt — c'est parti !", groupNextBtn:"Joueur suivant", groupSeeResultsBtn:"Voir les résultats",
+  groupResultsTitle:"Bravo à toute l'équipe !", groupTeamStars:"Étoiles de l'équipe cette manche",
+  groupPlayAgainBtn:"Rejouer", groupBackBtn:"Retour à la carte",
+  groupTypeLetters:"Lettres", groupTypeNumbers:"Nombres", groupTypeWords:"Mots", groupTypeSentences:"Phrases", groupTypeWarmup:"Échauffement",
+  ageLabel:"Quel âge as-tu ?",
+  tierA:"8–10", tierB:"11–12", tierC:"13–14",
+  handLabel:"Avec quelle main écris-tu ?", leftH:"Main gauche", rightH:"Main droite",
+  startBtn:"Commencer l'aventure",
+  hubGreeting:name=>`Content de te revoir, ${name} !`,
+  hubLead:"Choisis une île pour t'entraîner. Termine assez de missions pour débloquer la suivante.",
+  islandWarmup:"Crique d'Échauffement", islandWarmupDesc:"Assouplis ta main avec des tracés amusants.",
+  islandLetters:"Port des Lettres", islandLettersDesc:"Trace des lettres seules jusqu'à ce que ce soit facile.",
+  islandWords:"Baie des Mots", islandWordsDesc:"Assemble les lettres pour former des mots entiers.",
+  islandSentences:"Sommet des Phrases", islandSentencesDesc:"Écris des phrases complètes comme un pro.",
+  islandNumbers:"Coin des Nombres", islandNumbersDesc:"Trace les chiffres, puis des nombres plus grands.",
+  locked:"Verrouillé", unlockHint:n=>`Gagne encore ${n} ★ pour débloquer`,
+  freePractice:"Entraînement Libre", freePracticeDesc:"Tape n'importe quel mot ou phrase et trace-le.",
+  back:"Retour à la carte", pickLevel:"Choisis quelque chose à tracer :",
+  customLabel:"Ou écris ton propre mot/phrase :", customPh:"Écris n'importe quoi…", customGo:"Tracer",
+  showGuide:"Force du guide", penSize:"Épaisseur du stylo", clearBtn:"Effacer", checkBtn:"Vérifier mon écriture",
+  nextBtn:"Suivant", tryAgainBtn:"Réessayer",
+  fbGreat:"Superbe tracé ! Ta maîtrise de la main s'améliore vraiment.",
+  fbOk:"Bon travail — tu restes proche des lignes. Un dernier essai pour un score parfait ?",
+  fbRetry:"Bon début ! Ralentis un peu et suis bien les lignes claires du guide.",
+  starsLabel:"étoiles",
+  badgeWarmup:"Champion de l'Échauffement", badgeLetters:"Explorateur de l'Alphabet", badgeWords:"Bâtisseur de Mots",
+  badgeSentences:"Maître des Phrases", badgeTri:"Voyageur Trilingue", badgeStreak:"Série de 3 Jours", badgeMemory:"Maître de la Mémoire",
+  badgeNumbers:"Ninja des Nombres",
+  yourBadges:"Tes badges",
+  warmupInstruction:"Trace lentement le long de la route claire, en restant à l'intérieur du début à la fin.",
+  patternWave:"Route Ondulée", patternZig:"Route en Zigzag", patternLoop:"Route en Boucles", patternDiag:"Route Inclinée",
+  patternCircle:"Route en Cercles", patternBridge:"Petits Ponts",
+  settings:"Réglages", closeSettings:"Terminé",
+  islandMemory:"Baie de la Mémoire", islandMemoryDesc:"Regarde, cache, écris de mémoire, puis vérifie.",
+  memoryLook:"Regarde bien et retiens-le !", memoryReady:"Je suis prêt — cache-le !",
+  memoryWritePrompt:"Écris-le maintenant de mémoire", memoryReveal:"Le mot était :",
+  precisionBasic:"Facile", precisionAdvanced:"Précision", precisionHint:"Le mode Précision utilise une route plus fine et une correction plus stricte.",
+  printStudio:"Fiches à Imprimer", printStudioDesc:"Crée de vraies fiches papier pour t'entraîner au stylo.",
+  printPickType:"Que doit contenir la fiche ?", printPickItems:"Choisis les éléments à inclure :",
+  printSelectAll:"Tout sélectionner", printGenerate:"Créer la fiche", printNow:"Imprimer", printBackToBuilder:"Modifier la sélection",
+  printCustomLabel:"Ajoute tes propres mots ou lettres (un par ligne) :", printCustomPh:"ex. un mot par ligne",
+  printTitle:"Fiche d'Entraînement à l'Écriture",
+  printReport:"Rapport de Progrès", printReportBtn:"Générer le rapport",
+  reportSubtitle:"Rapport de Progrès en Écriture", reportDate:"Date", reportStars:"Total d'étoiles",
+  reportStreak:"Jours consécutifs", reportChapterProgress:"Progrès par activité", reportBadges:"Badges obtenus",
+  reportNone:"Aucun pour l'instant", reportSignature:"Signature de l'enseignant / du parent",
+  instructors:"Pour les Enseignants", instructorsIntro:"Un guide rapide sur le fonctionnement de cet outil, pour l'utiliser en toute confiance en classe ou à la maison.",
+  instructorsPedagogyTitle:"Comment c'est conçu",
+  instructorsPedagogy:["La Crique d'Échauffement utilise des tracés préparatoires classiques (vagues, zigzags, boucles, cercles) avant toute lettre — une séquence standard en ergothérapie.","Lettres, Nombres, Mots et Phrases suivent une progression volontaire, du symbole simple à la phrase complète.","La Baie de la Mémoire utilise la méthode Regarder-Cacher-Écrire-Vérifier, une approche éprouvée pour construire la mémorisation plutôt que la dépendance au traçage.","Le curseur de force du guide permet à l'apprenant de réduire l'aide progressivement plutôt que de dépendre d'un contour visible en permanence."],
+  instructorsScoringTitle:"Comment fonctionne la correction",
+  instructorsScoring:"Chaque essai est comparé à la vraie forme de la lettre, en vérifiant à la fois la part du modèle qui a été tracée (couverture) et la part de l'encre qui en est sortie (contrôle). La difficulté s'ajuste selon la tranche d'âge — les plus jeunes ont plus de tolérance, les plus âgés sont tenus à une ligne plus stricte.",
+  instructorsTierTitle:"Tranches d'âge",
+  instructorsTier:"Les tranches suivent globalement le primaire (8–10), la fin du primaire (11–12) et le collège (13–14). La longueur du contenu et la précision requise augmentent avec la tranche — un enseignant peut aussi choisir la tranche selon le niveau réel de l'élève, indépendamment de son âge.",
+  instructorsPrivacyTitle:"Données et confidentialité",
+  instructorsPrivacy:"Les progrès sont enregistrés uniquement sur le compte de l'apprenant. Rien n'est partagé avec d'autres utilisateurs, et il n'y a ni publicité ni suivi.",
+  instructorsClassroomTitle:"Utilisation suggérée en classe",
+  instructorsClassroom:"5 à 10 minutes en échauffement avant une activité d'écriture, ou en atelier tournant. L'Entraînement Libre permet d'assigner exactement les mots ou phrases déjà enseignés.",
+  footerPrivacyLink:"Confidentialité & Conditions",
+  privacyTitle:"Confidentialité & Conditions", privacyDisclaimer:"⚠️ Ceci est un modèle en langage simple, pas un document juridique. Fais-le relire et adapter par un avocat — en particulier la section sur les données des enfants — selon ton pays avant toute utilisation commerciale.",
+  privacyWhatTitle:"Ce que cette application enregistre", privacyWhat:"Le nom de l'apprenant, l'avatar choisi, les réglages de langue et de tranche d'âge, ainsi que la progression (étoiles, badges, série de jours). Ces données sont liées au compte utilisé pour accéder à l'application. Il n'y a aucune publicité et rien n'est vendu à des tiers.",
+  privacyChildrenTitle:"Si les apprenants sont des enfants", privacyChildren:"Cette application est souvent utilisée par des enfants avec l'aide d'un parent ou d'un enseignant. Si tu la proposes à des familles ou des écoles, vérifie la réglementation applicable à la vie privée des enfants dans ton marché (par exemple le RGPD en Europe) avant le lancement, et ajoute les étapes de consentement nécessaires.",
+  privacyControlTitle:"Plusieurs apprenants, un seul appareil", privacyControl:"Un même appareil peut contenir des profils séparés pour plusieurs apprenants (frères et sœurs, ou une tablette de classe utilisée à tour de rôle). La progression ne se synchronise pas entre différents appareils dans cette version.",
+  privacyContactTitle:"Contact", privacyContact:"Remplace cette ligne par ton e-mail de support ou ton contact professionnel avant publication.",
+  encouragements:["Belle concentration !","Quelle main stable !","Tu progresses à chaque essai !","Garde ce rythme, doucement.","Tes lignes deviennent plus fluides !"]
+},
+ar:{ dir:"rtl", appTitle:"مغامرة الخط", appSub:"تتبّع الحروف. اجمع النجوم. طوّر خطّك.",
+  onboardTitle:"لنجهّز ملفك", onboardLead:"يستغرق ٢٠ ثانية فقط. يمكنك تغيير أي شيء لاحقًا.",
+  nameLabel:"ما اسمك؟", namePh:"اكتب اسمك",
+  avatarLabel:"اختر مستكشفك",
+  profilePickerTitle:"من سيتدرّب اليوم؟", profilePickerDesc:"اختر اسمك، أو أضف متعلّمًا جديدًا على هذا الجهاز.",
+  addLearner:"إضافة متعلّم آخر", switchLearner:"تبديل المتعلّم",
+  groupMode:"وضع المجموعة", groupModeDesc:"العب بالتناوب مع ٢ إلى ٤ متعلّمين على نفس الجهاز.",
+  groupNeedTwo:"أضف ملفًا آخر على الأقل لمتعلّم لاستخدام وضع المجموعة.",
+  groupSetupTitle:"من سيلعب؟", groupPickLearners:"اختر من ٢ إلى ٤ متعلّمين:",
+  groupPickActivity:"اختر ما ستتدرّبون عليه:", groupStartBtn:"ابدأ الجولة",
+  groupTurnPrompt:name=>`دورك يا ${name}!`, groupPassPrompt:"مرّر الجهاز، ثم اضغط جاهز.",
+  groupReadyBtn:"أنا جاهز — لنبدأ!", groupNextBtn:"اللاعب التالي", groupSeeResultsBtn:"عرض النتائج",
+  groupResultsTitle:"أحسنتم يا فريق!", groupTeamStars:"نجوم الفريق في هذه الجولة",
+  groupPlayAgainBtn:"العب مرة أخرى", groupBackBtn:"العودة إلى الخريطة",
+  groupTypeLetters:"الحروف", groupTypeNumbers:"الأرقام", groupTypeWords:"الكلمات", groupTypeSentences:"الجُمل", groupTypeWarmup:"الإحماء",
+  ageLabel:"كم عمرك؟",
+  tierA:"٨–١٠", tierB:"١١–١٢", tierC:"١٣–١٤",
+  handLabel:"بأي يد تكتب؟", leftH:"اليد اليسرى", rightH:"اليد اليمنى",
+  startBtn:"ابدأ المغامرة",
+  hubGreeting:name=>`مرحبًا بعودتك، ${name}!`,
+  hubLead:"اختر جزيرة للتدرّب فيها. أنجز مهامًا كافية لفتح الجزيرة التالية.",
+  islandWarmup:"خليج الإحماء", islandWarmupDesc:"أرخِ يدك بأنماط خطوط ممتعة.",
+  islandLetters:"ميناء الحروف", islandLettersDesc:"تتبّع حرفًا واحدًا حتى يصبح سهلًا.",
+  islandWords:"خليج الكلمات", islandWordsDesc:"اجمع الحروف لتكوين كلمات كاملة.",
+  islandSentences:"قمة الجُمل", islandSentencesDesc:"اكتب جملًا كاملة كالمحترفين.",
+  islandNumbers:"ركن الأرقام", islandNumbersDesc:"تتبّع الأرقام، ثم أرقامًا أكبر.",
+  locked:"مغلق", unlockHint:n=>`اجمع ${n} ★ إضافية لفتحها`,
+  freePractice:"تدريب حرّ", freePracticeDesc:"اكتب أي كلمة أو جملة وتتبّعها.",
+  back:"العودة إلى الخريطة", pickLevel:"اختر شيئًا لتتبّعه:",
+  customLabel:"أو اكتب كلمتك أو جملتك:", customPh:"اكتب أي شيء…", customGo:"تتبّع",
+  showGuide:"قوة الدليل", penSize:"سُمك القلم", clearBtn:"مسح", checkBtn:"تحقق من كتابتي",
+  nextBtn:"التالي", tryAgainBtn:"حاول مرة أخرى",
+  fbGreat:"تتبّع رائع! تحكّمك بيدك يتحسّن حقًا.",
+  fbOk:"عمل جيد — أنت قريب من الخطوط. محاولة أخرى لعلامة كاملة؟",
+  fbRetry:"بداية جيدة! أبطئ قليلًا واتبع خطوط الدليل الفاتحة بدقة.",
+  starsLabel:"نجوم",
+  badgeWarmup:"بطل الإحماء", badgeLetters:"مستكشف الأبجدية", badgeWords:"بنّاء الكلمات",
+  badgeSentences:"سيّد الجُمل", badgeTri:"الرحّالة الثلاثي اللغات", badgeStreak:"سلسلة ٣ أيام", badgeMemory:"سيّد الذاكرة",
+  badgeNumbers:"نينجا الأرقام",
+  yourBadges:"شاراتك",
+  warmupInstruction:"تتبّع ببطء على طول الطريق الفاتح، وابقَ داخله من البداية إلى النهاية.",
+  patternWave:"طريق متموّج", patternZig:"طريق متعرّج", patternLoop:"طريق حلقي", patternDiag:"طريق مائل",
+  patternCircle:"طريق دائري", patternBridge:"جسور متعرجة",
+  settings:"الإعدادات", closeSettings:"تم",
+  islandMemory:"خليج الذاكرة", islandMemoryDesc:"انظر، غطِّ، اكتب من الذاكرة، ثم تحقق.",
+  memoryLook:"انظر جيدًا واحفظه!", memoryReady:"أنا جاهز — أخفِه!",
+  memoryWritePrompt:"الآن اكتبه من ذاكرتك", memoryReveal:"الكلمة كانت:",
+  precisionBasic:"سهل", precisionAdvanced:"دقة عالية", precisionHint:"يستخدم وضع الدقة طريقًا أرفع وتقييمًا أكثر صرامة.",
+  printStudio:"أوراق تدريب للطباعة", printStudioDesc:"أنشئ أوراقًا حقيقية للتدرّب بالقلم والورق.",
+  printPickType:"ماذا يجب أن تتضمّن الورقة؟", printPickItems:"اختر العناصر لتضمينها:",
+  printSelectAll:"تحديد الكل", printGenerate:"إنشاء الورقة", printNow:"طباعة", printBackToBuilder:"تعديل الاختيار",
+  printCustomLabel:"أضف كلماتك أو حروفك الخاصة (واحدة في كل سطر):", printCustomPh:"مثال: كلمة واحدة في كل سطر",
+  printTitle:"ورقة تدريب الخط",
+  printReport:"تقرير التقدّم", printReportBtn:"إنشاء التقرير",
+  reportSubtitle:"تقرير التقدّم في الخط", reportDate:"التاريخ", reportStars:"إجمالي النجوم",
+  reportStreak:"أيام متتالية", reportChapterProgress:"التقدّم حسب النشاط", reportBadges:"الشارات المكتسبة",
+  reportNone:"لا يوجد بعد", reportSignature:"توقيع المعلّم / ولي الأمر",
+  instructors:"للمعلّمين", instructorsIntro:"دليل سريع لكيفية عمل هذه الأداة، لاستخدامها بثقة في الصف أو في المنزل.",
+  instructorsPedagogyTitle:"كيف صُمم هذا التطبيق",
+  instructorsPedagogy:["يستخدم خليج الإحماء أنماط حركية تحضيرية كلاسيكية (موجات، تعرجات، حلقات، دوائر) قبل أي حروف — وهو تسلسل معتمد في العلاج الوظيفي.","تتبع الحروف والأرقام والكلمات والجُمل تدرّجًا مقصودًا من الرمز البسيط إلى الجملة الكاملة.","يستخدم خليج الذاكرة طريقة انظر-غطِّ-اكتب-تحقق، وهي أسلوب مثبت علميًا لبناء الاستدعاء بدلًا من الاعتماد على النسخ.","يتيح منزلق قوة الدليل للمتعلّم تقليل الدعم تدريجيًا بدلًا من الاعتماد الدائم على مخطط ظاهر."],
+  instructorsScoringTitle:"كيف يعمل التقييم",
+  instructorsScoring:"تُقارن كل محاولة بالشكل الحقيقي للحرف، مع التحقق من مدى تغطية النموذج (التغطية) ومدى خروج الحبر عن حدوده (التحكم). تتكيّف الصعوبة حسب الفئة العمرية — يحصل الأصغر سنًا على تسامح أكبر، بينما يُطلب من الأكبر سنًا التزام أدق.",
+  instructorsTierTitle:"الفئات العمرية",
+  instructorsTier:"تقارب الفئات مراحل الابتدائي المبكر (٨–١٠)، الابتدائي المتأخر (١١–١٢)، والإعدادي (١٣–١٤). يزداد طول المحتوى والدقة المطلوبة مع الفئة — ويمكن للمعلّم اختيار الفئة حسب مستوى المتعلّم الفعلي بغض النظر عن عمره.",
+  instructorsPrivacyTitle:"البيانات والخصوصية",
+  instructorsPrivacy:"يُحفظ التقدّم في حساب المتعلّم فقط. لا يُشارك شيء مع مستخدمين آخرين، ولا توجد إعلانات أو تتبّع.",
+  instructorsClassroomTitle:"اقتراح للاستخدام الصفّي",
+  instructorsClassroom:"٥ إلى ١٠ دقائق كإحماء قبل نشاط كتابي، أو كمحطة ضمن دوران الأنشطة. يتيح التدريب الحرّ تخصيص كلمات أو جُمل الإملاء التي تُدرّسها بالفعل.",
+  footerPrivacyLink:"الخصوصية والشروط",
+  privacyTitle:"الخصوصية والشروط", privacyDisclaimer:"⚠️ هذا نص توضيحي مبسّط وليس وثيقة قانونية. يُرجى مراجعته وتكييفه من قِبل محامٍ — خصوصًا قسم بيانات الأطفال — بما يتوافق مع بلدك قبل استخدامه تجاريًا.",
+  privacyWhatTitle:"ما تخزّنه هذه الأداة", privacyWhat:"اسم المتعلّم، الصورة الرمزية المختارة، إعدادات اللغة والفئة العمرية، وتقدّم التدريب (النجوم، الشارات، السلسلة اليومية). تُخزَّن هذه البيانات ضمن الحساب المستخدَم للوصول إلى التطبيق. لا توجد إعلانات ولا تُباع أي بيانات لأطراف ثالثة.",
+  privacyChildrenTitle:"إذا كان المتعلّمون أطفالًا", privacyChildren:"غالبًا ما يستخدم الأطفال هذا التطبيق بمساعدة أحد الوالدين أو المعلّم. إذا كنت تقدّمه للعائلات أو المدارس، راجع القوانين المعمول بها بشأن خصوصية بيانات الأطفال في سوقك قبل الإطلاق، وأضف أي خطوات موافقة مطلوبة.",
+  privacyControlTitle:"عدّة متعلّمين، جهاز واحد", privacyControl:"يمكن لجهاز واحد أن يحتوي على ملفات منفصلة لعدّة متعلّمين (إخوة، أو جهاز لوحي في صف يُستخدم بالتناوب). لا يتزامن التقدّم بين أجهزة مختلفة في هذا الإصدار.",
+  privacyContactTitle:"التواصل", privacyContact:"استبدل هذا السطر ببريد الدعم الخاص بك أو جهة الاتصال التجارية قبل النشر.",
+  encouragements:["تركيز رائع!","يد ثابتة جدًا!","تتحسّن مع كل محاولة!","حافظ على هذه السرعة، بهدوء.","خطوطك تصبح أكثر سلاسة!"]
+}
+};
+
+/* ---------------- Word / letter banks ---------------- */
+const BANKS = {
+en:{
+  letters:["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"],
+  numbers:{ A:["0","1","2","3","4","5","6","7","8","9"],
+            B:["10","12","15","20","25","30","42","58","67","99"],
+            C:["125","340","567","789","913","456","602","831","247","715"] },
+  words:{ A:["cat","sun","dog","run","big","red","hop","fun","top","bed","cup","map","six","wet","yes"],
+          B:["happy","garden","rocket","purple","forest","yellow","bridge","magnet","picture","sandwich","elephant","whisper","journey","kitchen"],
+          C:["mountain","adventure","curious","practice","yesterday","wonderful","dangerous","chocolate","dictionary","telescope","knowledge","challenge"] },
+  sentences:["I can write neatly.","The sun is bright today.","My dog loves to run.","Practice makes progress.","We explored the old map.","She reads a new book.","The garden is full of flowers.","Every letter tells a story.","Slow and steady wins the race.","Today I learned something new."]
+},
+fr:{
+  letters:["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","é","è","à","ç","ê","ù"],
+  numbers:{ A:["0","1","2","3","4","5","6","7","8","9"],
+            B:["10","12","15","20","25","30","42","58","67","99"],
+            C:["125","340","567","789","913","456","602","831","247","715"] },
+  words:{ A:["chat","sac","roi","mur","feu","joli","bleu","lune","nez","jeu","vie","pain","main","doux","riz"],
+          B:["maison","jardin","soleil","voiture","montagne","fenêtre","cuisine","lumière","poisson","gâteau","voyage","cheval","chapeau","dessin"],
+          C:["aventure","curieux","pratique","voyageur","découverte","merveilleux","dangereux","chocolat","dictionnaire","télescope","connaissance","courageux"] },
+  sentences:["J'aime écrire chaque jour.","Le soleil brille aujourd'hui.","Mon chien aime courir.","La pratique rend parfait.","Nous explorons la carte.","Elle lit un nouveau livre.","Le jardin est plein de fleurs.","Chaque lettre raconte une histoire.","Lentement mais sûrement on progresse.","Aujourd'hui j'ai appris quelque chose."]
+},
+ar:{
+  letters:["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"],
+  numbers:{ A:["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"],
+            B:["١٠","١٢","١٥","٢٠","٢٥","٣٠","٤٢","٥٨","٦٧","٩٩"],
+            C:["١٢٥","٣٤٠","٥٦٧","٧٨٩","٩١٣","٤٥٦","٦٠٢","٨٣١","٢٤٧","٧١٥"] },
+  words:{ A:["قط","شمس","باب","قلم","بيت","نور","ورد","قمر","يد","فم","عين","أذن","كتب","ماء","نار"],
+          B:["مدرسة","حديقة","سيارة","نافذة","جميلة","رحلة","طائرة","مكتبة","ملعب","سمكة","فراشة","شجرة","دراجة","سلحفاة"],
+          C:["مغامرة","اكتشاف","مثابرة","مسافر","خريطة","رائعة","خطيرة","شوكولاتة","قاموس","تلسكوب","معرفة","تحدي"] },
+  sentences:["أنا أحب الكتابة.","الشمس مشرقة اليوم.","كلبي يحب الجري.","التمرين يقود إلى التقدم.","اكتشفنا خريطة قديمة.","هي تقرأ كتابًا جديدًا.","الحديقة مليئة بالزهور.","كل حرف يحكي قصة.","الهدوء يقود إلى النجاح.","تعلّمت اليوم شيئًا جديدًا."]
+}
+};
+
+const LOGO_DATA_URI = "data:image/png;base64,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";
+const AVATARS = ["🦊","🐼","🦁","🐧","🐢","🦄","🐝","🐬"];
+
+/* ---------------- State ---------------- */
+function freshState(){
+  return {
+    name:"", avatar:"🦊", lang:"en", tier:"A", leftHanded:false,
+    stars:0, badges:[],
+    completed:{ warmup:{}, letters:{}, words:{}, sentences:{}, memory:{}, numbers:{} },
+    streak:0, lastPlayDate:null,
+    guideOpacity:0.35, penWidth:14,
+    onboarded:false
+  };
+}
+let state = freshState();
+let view = "loading"; // loading | profile-picker | onboard | map | levels | trace | warmup | ...
+let currentChapter = null; // letters|words|sentences
+let currentTarget = null;  // string being traced
+let currentLevelIndex = 0;
+let currentPatternKey = null;
+let currentProfileId = null;
+let profilesList = []; // [{id, name, avatar}] — lets several children share one device
+
+// ---- Group Mode: turn-based practice for 2-4 learners on one device ----
+let groupMembers = [];      // [{id,name,avatar}] selected participants
+let groupTurnIndex = 0;
+let groupChapterType = null; // 'letters'|'numbers'|'words'|'sentences'|'warmup'
+let groupTarget = null;      // word/letter or pattern key for this round
+let groupResults = [];       // [{id,name,avatar,stars}]
+let groupHostProfileId = null; // whoever's profile was active before Group Mode started
+let groupPhase = 'pass';     // 'pass' (hand-off screen) | 'trace' (active turn)
+
+const CHAPTER_ORDER = ["warmup","letters","words","sentences"];
+const UNLOCK_THRESHOLD = { letters:0, words:15, sentences:35 }; // stars needed
+
+/* ---------------- Persistence (per-learner profiles) ---------------- */
+async function loadProfilesIndex(){
+  try{
+    const res = await window.storage.get('profiles_index', false);
+    if(res && res.value) profilesList = JSON.parse(res.value) || [];
+  }catch(e){ profilesList = []; }
+}
+async function saveProfilesIndex(){
+  try{ await window.storage.set('profiles_index', JSON.stringify(profilesList), false); }catch(e){ /* best-effort */ }
+}
+async function loadProfileState(id){
+  state = freshState();
+  try{
+    const res = await window.storage.get('profile:'+id, false);
+    if(res && res.value){ state = Object.assign(state, JSON.parse(res.value)); }
+  }catch(e){ /* new/empty profile */ }
+  state.completed = state.completed || {};
+  ['warmup','letters','words','sentences','memory','numbers'].forEach(c=>{ state.completed[c] = state.completed[c] || {}; });
+  checkStreak();
+}
+async function saveProgress(){
+  if(!currentProfileId) return;
+  try{ await window.storage.set('profile:'+currentProfileId, JSON.stringify(state), false); }catch(e){ /* best-effort */ }
+}
+function checkStreak(){
+  const today = new Date().toDateString();
+  if(state.lastPlayDate === today) return;
+  const y = new Date(); y.setDate(y.getDate()-1);
+  if(state.lastPlayDate === y.toDateString()){ state.streak = (state.streak||0)+1; }
+  else if(state.lastPlayDate){ state.streak = 1; }
+  else { state.streak = 1; }
+  state.lastPlayDate = today;
+  if(state.streak>=3 && !state.badges.includes('streak')) state.badges.push('streak');
+}
+
+async function boot(){
+  await loadProfilesIndex();
+  if(profilesList.length===0){
+    currentProfileId = null;
+    state = freshState();
+    view = 'onboard';
+  } else if(profilesList.length===1){
+    currentProfileId = profilesList[0].id;
+    await loadProfileState(currentProfileId);
+    view = state.onboarded ? 'map' : 'onboard';
+  } else {
+    view = 'profile-picker';
+  }
+  render();
+}
+
+/* ---------------- Helpers ---------------- */
+function t(){ return STR[state.lang]; }
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstElementChild; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// Makes a clickable <div> keyboard-accessible (Tab to focus, Enter/Space to activate) without changing its look.
+function makeClickable(node, handler){
+  node.setAttribute('tabindex','0');
+  node.setAttribute('role','button');
+  node.onclick = handler;
+  node.onkeydown = (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(e); } };
+}
+// The authentic handwriting-model font for whatever text/language is being shown —
+// used everywhere a letter/word/sentence appears as HTML text, not just on the canvas.
+function handwritingFontCss(text){
+  return glyphFontFor(text).fontFamily;
+}
+function starsForChapter(ch){
+  return Object.values(state.completed[ch]||{}).reduce((a,b)=>a+b,0);
+}
+function totalStarsInChapters(...chs){ return chs.reduce((a,c)=>a+starsForChapter(c),0); }
+function isUnlocked(ch){
+  if(ch==='warmup'||ch==='letters'||ch==='numbers') return true;
+  if(ch==='words') return state.stars>=UNLOCK_THRESHOLD.words;
+  if(ch==='memory') return state.stars>=UNLOCK_THRESHOLD.words;
+  if(ch==='sentences') return state.stars>=UNLOCK_THRESHOLD.sentences;
+  return false;
+}
+function maybeAwardBadges(){
+  const b = state.badges;
+  if(starsForChapter('warmup')>=14 && !b.includes('warmup')) b.push('warmup');
+  if(starsForChapter('letters')>=45 && !b.includes('letters')) b.push('letters');
+  if(starsForChapter('words')>=30 && !b.includes('words')) b.push('words');
+  if(starsForChapter('sentences')>=20 && !b.includes('sentences')) b.push('sentences');
+  if(starsForChapter('memory')>=18 && !b.includes('memory')) b.push('memory');
+  if(starsForChapter('numbers')>=24 && !b.includes('numbers')) b.push('numbers');
+  const usedLangs = new Set();
+  ['warmup','letters','words','sentences'].forEach(ch=>{
+    Object.keys(state.completed[ch]||{}).forEach(k=>{ if(k.startsWith(state.lang+':')) usedLangs.add(state.lang); });
+  });
+  // trilingual badge tracked via a stored set
+  state.langsPlayed = state.langsPlayed || [];
+  if(!state.langsPlayed.includes(state.lang)) state.langsPlayed.push(state.lang);
+  if(state.langsPlayed.length>=3 && !b.includes('tri')) b.push('tri');
+}
+const BADGE_LABELS = { warmup:"badgeWarmup", letters:"badgeLetters", words:"badgeWords", sentences:"badgeSentences", tri:"badgeTri", streak:"badgeStreak", memory:"badgeMemory", numbers:"badgeNumbers" };
+const BADGE_ICON = { warmup:"🌊", letters:"🔤", words:"📖", sentences:"🏔️", tri:"🌍", streak:"🔥", memory:"🧠", numbers:"🔢" };
+
+/* ---------------- Rendering: root ---------------- */
+function render(){
+  document.body.dir = t().dir;
+  document.documentElement.lang = state.lang;
+  const app = document.getElementById('app');
+  app.innerHTML = "";
+  app.appendChild(renderTopbar());
+  const stage = el(`<div class="stage" id="stage"></div>`);
+  app.appendChild(stage);
+
+  try{
+    if(view==='loading'){ /* brief boot flash, nothing to render yet */ }
+    else if(view==='profile-picker') renderProfilePicker(stage);
+    else if(view==='onboard') renderOnboard(stage);
+    else if(view==='map') renderMap(stage);
+    else if(view==='levels') renderLevels(stage);
+    else if(view==='freepractice') renderFreePractice(stage);
+    else if(view==='memory-peek') renderMemoryPeek(stage);
+    else if(view==='trace') renderTrace(stage);
+    else if(view==='warmup') renderWarmupPicker(stage);
+    else if(view==='print') renderPrintStudio(stage);
+    else if(view==='instructors') renderInstructors(stage);
+    else if(view==='privacy') renderPrivacy(stage);
+    else if(view==='group-setup') renderGroupSetup(stage);
+    else if(view==='group-trace') renderGroupTrace(stage);
+    else if(view==='group-results') renderGroupResults(stage);
+  }catch(err){
+    console.error('Handwriting Quest render error:', err);
+    stage.innerHTML = "";
+    const msgs = { en:"Something went wrong loading this screen.", fr:"Un problème est survenu lors du chargement de cet écran.", ar:"حدثت مشكلة أثناء تحميل هذه الشاشة." };
+    const btnLabel = { en:"Back to map", fr:"Retour à la carte", ar:"العودة إلى الخريطة" };
+    stage.appendChild(el(`<p class="lead">${msgs[state.lang]||msgs.en}</p>`));
+    const homeBtn = el(`<button class="btn btn-primary">${btnLabel[state.lang]||btnLabel.en}</button>`);
+    homeBtn.onclick = ()=>{ view='map'; render(); };
+    stage.appendChild(homeBtn);
+  }
+
+  const foot = el(`<footer class="note">${
+    state.lang==='en' ? "Progress is saved automatically to your account. Built on tracing + spaced repetition + fading scaffolds — proven handwriting instruction principles."
+    : state.lang==='fr' ? "Ta progression est enregistrée automatiquement. Basé sur le traçage, la répétition espacée et le retrait progressif du guidage — des principes reconnus pour l'apprentissage de l'écriture."
+    : "يُحفظ تقدّمك تلقائيًا. مبني على مبدأ التتبّع والتكرار المتباعد وتقليل الدعم تدريجيًا — أسس تعليمية مثبتة لتعلّم الخط."
+  }<br><span id="privacyLinkSpan" style="text-decoration:underline; cursor:pointer;">${t().footerPrivacyLink}</span></footer>`);
+  const privacyLink = foot.querySelector('#privacyLinkSpan');
+  if(privacyLink){ makeClickable(privacyLink, ()=>{ view='privacy'; render(); }); }
+  app.appendChild(foot);
+}
+
+function renderTopbar(){
+  const bar = el(`<div class="topbar"></div>`);
+  const brand = el(`<div class="brand">
+      <div class="brand-mark"><img src="${LOGO_DATA_URI}" alt="mentalness logo"></div>
+      <div><div class="brand-title">${t().appTitle}</div><div class="brand-sub">${t().appSub}</div></div>
+    </div>`);
+  const controls = el(`<div class="top-controls"></div>`);
+  if(state.onboarded && view!=='map'){
+    const homeBtn = el(`<button type="button" class="btn" style="background:var(--coral); color:var(--white); box-shadow:0 3px 0 var(--coral-deep); padding:8px 14px; font-size:.85rem; display:flex; align-items:center; gap:6px;">🏠 ${t().back}</button>`);
+    homeBtn.onclick = ()=>{ view='map'; render(); };
+    controls.appendChild(homeBtn);
+  }
+  const langSwitch = el(`<div class="lang-switch"></div>`);
+  [["en","EN"],["fr","FR"],["ar","AR"]].forEach(([code,label])=>{
+    const b = el(`<button type="button">${label}</button>`);
+    if(state.lang===code) b.classList.add('active');
+    b.onclick = ()=>{
+      state.lang=code;
+      // Clear anything tied to the previous language so stale content/font never lingers.
+      currentTarget = null; currentChapter = null; currentPatternKey = null;
+      if(state.onboarded){ maybeAwardBadges(); view='map'; } else { view='onboard'; }
+      saveProgress(); render();
+    };
+    langSwitch.appendChild(b);
+  });
+  controls.appendChild(langSwitch);
+  if(state.onboarded){
+    const stars = el(`<div class="stars-pill">⭐ ${state.stars} ${t().starsLabel}</div>`);
+    controls.appendChild(stars);
+    const av = el(`<button type="button" class="icon-btn" aria-label="${t().switchLearner}" title="${t().switchLearner}">${state.avatar}</button>`);
+    av.onclick = ()=>{ view='profile-picker'; render(); };
+    controls.appendChild(av);
+  }
+  bar.appendChild(brand); bar.appendChild(controls);
+  return bar;
+}
+
+/* ---------------- Onboarding ---------------- */
+function renderOnboard(stage){
+  if(profilesList.length>0){
+    const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+    backBtn.onclick = ()=>{ view='profile-picker'; render(); };
+    stage.appendChild(backBtn);
+  }
+  stage.appendChild(el(`<img src="${LOGO_DATA_URI}" alt="mentalness logo" class="welcome-logo">`));
+  stage.appendChild(el(`<div class="eyebrow-free" style="text-align:center;">👋</div>`));
+  stage.appendChild(el(`<h2 style="text-align:center;">${t().onboardTitle}</h2>`));
+  stage.appendChild(el(`<p class="lead" style="text-align:center;">${t().onboardLead}</p>`));
+
+  const nameField = el(`<div class="field">
+      <label>${t().nameLabel}</label>
+      <input type="text" id="nameInput" placeholder="${t().namePh}" value="${state.name||''}">
+    </div>`);
+  stage.appendChild(nameField);
+
+  const avField = el(`<div class="field"><label>${t().avatarLabel}</label><div class="avatar-row" id="avatarRow"></div></div>`);
+  stage.appendChild(avField);
+  const row = avField.querySelector('#avatarRow');
+  AVATARS.forEach(a=>{
+    const c = el(`<div class="avatar-choice ${a===state.avatar?'selected':''}" aria-label="${a}">${a}</div>`);
+    makeClickable(c, ()=>{ state.avatar=a; row.querySelectorAll('.avatar-choice').forEach(n=>n.classList.remove('selected')); c.classList.add('selected'); });
+    row.appendChild(c);
+  });
+
+  const ageField = el(`<div class="field"><label>${t().ageLabel}</label><div class="pickrow" id="ageRow"></div></div>`);
+  stage.appendChild(ageField);
+  const ageRow = ageField.querySelector('#ageRow');
+  [["A",t().tierA,"🌱"],["B",t().tierB,"🌿"],["C",t().tierC,"🌳"]].forEach(([code,label,icon])=>{
+    const c = el(`<div class="pickcard ${state.tier===code?'selected':''}"><span class="em">${icon}</span>${label}</div>`);
+    makeClickable(c, ()=>{ state.tier=code; ageRow.querySelectorAll('.pickcard').forEach(n=>n.classList.remove('selected')); c.classList.add('selected'); });
+    ageRow.appendChild(c);
+  });
+
+  const handField = el(`<div class="field"><label>${t().handLabel}</label><div class="pickrow" id="handRow"></div></div>`);
+  stage.appendChild(handField);
+  const handRow = handField.querySelector('#handRow');
+  [[false,t().rightH,"✋"],[true,t().leftH,"🤚"]].forEach(([val,label,icon])=>{
+    const c = el(`<div class="pickcard ${state.leftHanded===val?'selected':''}"><span class="em">${icon}</span>${label}</div>`);
+    makeClickable(c, ()=>{ state.leftHanded=val; handRow.querySelectorAll('.pickcard').forEach(n=>n.classList.remove('selected')); c.classList.add('selected'); });
+    handRow.appendChild(c);
+  });
+
+  const btnRow = el(`<div class="btn-row"></div>`);
+  const startBtn = el(`<button class="btn btn-primary">${t().startBtn}</button>`);
+  startBtn.onclick = async ()=>{
+    const nameVal = stage.querySelector('#nameInput').value.trim();
+    state.name = nameVal || (state.lang==='ar'?"مستكشف":state.lang==='fr'?"Explorateur":"Explorer");
+    state.onboarded = true;
+    if(!currentProfileId){
+      currentProfileId = 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+      profilesList.push({ id:currentProfileId, name:state.name, avatar:state.avatar });
+      await saveProfilesIndex();
+    } else {
+      const entry = profilesList.find(p=>p.id===currentProfileId);
+      if(entry){ entry.name = state.name; entry.avatar = state.avatar; await saveProfilesIndex(); }
+    }
+    maybeAwardBadges();
+    await saveProgress();
+    view='map'; render();
+  };
+  btnRow.appendChild(startBtn);
+  stage.appendChild(btnRow);
+}
+
+/* ---------------- Profile picker (shared-device support) ---------------- */
+function renderProfilePicker(stage){
+  stage.appendChild(el(`<img src="${LOGO_DATA_URI}" alt="mentalness logo" class="welcome-logo" style="width:76px;height:76px;">`));
+  stage.appendChild(el(`<h2 style="text-align:center;">👋 ${t().profilePickerTitle}</h2>`));
+  stage.appendChild(el(`<p class="lead" style="text-align:center;">${t().profilePickerDesc}</p>`));
+  const grid = el(`<div class="islands"></div>`);
+  profilesList.forEach(p=>{
+    const card = el(`<div class="island" tabindex="0" role="button" style="cursor:pointer; text-align:center; align-items:center;">
+        <div style="font-size:2.4rem;">${p.avatar||'🦊'}</div>
+        <h3>${escapeHtml(p.name||'')}</h3>
+      </div>`);
+    const choose = async ()=>{ currentProfileId = p.id; await loadProfileState(p.id); view = state.onboarded ? 'map' : 'onboard'; render(); };
+    card.onclick = choose;
+    card.onkeydown = (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); choose(); } };
+    grid.appendChild(card);
+  });
+  const addCard = el(`<div class="island" tabindex="0" role="button" style="cursor:pointer; text-align:center; align-items:center; border-style:dashed;">
+      <div style="font-size:2.4rem;">➕</div>
+      <h3>${t().addLearner}</h3>
+    </div>`);
+  const addNew = ()=>{ currentProfileId=null; state=freshState(); view='onboard'; render(); };
+  addCard.onclick = addNew;
+  addCard.onkeydown = (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); addNew(); } };
+  grid.appendChild(addCard);
+  stage.appendChild(grid);
+}
+
+/* ---------------- Map / hub ---------------- */
+function renderMap(stage){
+  stage.innerHTML = `<div class="eyebrow-free">${state.avatar}</div>
+    <h2>${t().hubGreeting(state.name)}</h2>
+    <p class="lead">${t().hubLead}</p>`;
+
+  const islandsWrap = el(`<div class="islands"></div>`);
+  const ISLAND_COLOR = { warmup:'#4FC3F7', letters:'#FF6B6B', numbers:'#FF9F45', words:'#3ECF8E', memory:'#9B6BFF', sentences:'#FFC93C' };
+  const defs = [
+    { key:'warmup', icon:'🌊', title:t().islandWarmup, desc:t().islandWarmupDesc, needed:0 },
+    { key:'letters', icon:'🔤', title:t().islandLetters, desc:t().islandLettersDesc, needed:0 },
+    { key:'numbers', icon:'🔢', title:t().islandNumbers, desc:t().islandNumbersDesc, needed:0 },
+    { key:'words', icon:'📖', title:t().islandWords, desc:t().islandWordsDesc, needed:UNLOCK_THRESHOLD.words },
+    { key:'memory', icon:'🧠', title:t().islandMemory, desc:t().islandMemoryDesc, needed:UNLOCK_THRESHOLD.words },
+    { key:'sentences', icon:'🏔️', title:t().islandSentences, desc:t().islandSentencesDesc, needed:UNLOCK_THRESHOLD.sentences },
+  ];
+  defs.forEach(d=>{
+    const unlocked = isUnlocked(d.key);
+    const earned = starsForChapter(d.key);
+    const cap = (d.key==='warmup'? PATTERNS.length
+               : d.key==='letters'? BANKS[state.lang].letters.length
+               : d.key==='numbers'? BANKS[state.lang].numbers[state.tier].length
+               : d.key==='words'? BANKS[state.lang].words[state.tier].length
+               : d.key==='memory'? BANKS[state.lang].words[state.tier].length
+               : BANKS[state.lang].sentences.length) * 3;
+    const pct = Math.min(100, Math.round((earned/cap)*100));
+    const accent = ISLAND_COLOR[d.key] || '#4FC3F7';
+    const card = el(`<div class="island ${unlocked?'':'locked'}" style="border-color:${accent}66; background:${accent}18;">
+        ${unlocked?'':`<div class="lock-badge">🔒</div>`}
+        <div class="isle-icon">${d.icon}</div>
+        <h3>${d.title}</h3>
+        <div class="isle-desc">${unlocked? d.desc : t().unlockHint(Math.max(0,d.needed-state.stars))}</div>
+        <div class="progress-bar"><div style="width:${unlocked?pct:0}%; background:${accent};"></div></div>
+      </div>`);
+    if(unlocked){
+      card.style.cursor='pointer';
+      makeClickable(card, ()=>{
+        if(d.key==='warmup'){ view='warmup'; }
+        else { currentChapter=d.key; currentLevelIndex=0; view='levels'; }
+        render();
+      });
+    }
+    islandsWrap.appendChild(card);
+  });
+  stage.appendChild(islandsWrap);
+
+  if(state.badges.length){
+    const shelfLabel = el(`<p class="lead" style="margin-top:18px;margin-bottom:4px;"><strong>${t().yourBadges}</strong></p>`);
+    stage.appendChild(shelfLabel);
+    const shelf = el(`<div class="badge-shelf"></div>`);
+    state.badges.forEach(b=>{
+      shelf.appendChild(el(`<div class="badge-chip">${BADGE_ICON[b]||'🏅'} ${t()[BADGE_LABELS[b]]||b}</div>`));
+    });
+    stage.appendChild(shelf);
+  }
+
+  const printCard = el(`<div class="island" style="margin-top:14px;cursor:pointer;border-color:#4FC3F766;background:#4FC3F718;">
+      <div class="isle-icon">🖨️</div><h3>${t().printStudio}</h3>
+      <div class="isle-desc">${t().printStudioDesc}</div>
+    </div>`);
+  makeClickable(printCard, ()=>{ view='print'; render(); });
+  stage.appendChild(printCard);
+
+  const groupCard = el(`<div class="island" style="margin-top:10px;cursor:pointer;border-color:#FF9F4566;background:#FF9F4518;">
+      <div class="isle-icon">👥</div><h3>${t().groupMode}</h3>
+      <div class="isle-desc">${t().groupModeDesc}</div>
+    </div>`);
+  makeClickable(groupCard, ()=>{
+    if(profilesList.length<2){ alert(t().groupNeedTwo); return; }
+    view='group-setup'; render();
+  });
+  stage.appendChild(groupCard);
+
+  const instructorCard = el(`<div class="island" style="margin-top:10px;cursor:pointer;border-color:#8B5CF666;background:#8B5CF618;">
+      <div class="isle-icon">🎓</div><h3>${t().instructors}</h3>
+      <div class="isle-desc">${t().instructorsIntro}</div>
+    </div>`);
+  makeClickable(instructorCard, ()=>{ view='instructors'; render(); });
+  stage.appendChild(instructorCard);
+
+  const freeCard = el(`<div class="island" style="margin-top:14px;cursor:pointer;">
+      <div class="isle-icon">✍️</div><h3>${t().freePractice}</h3>
+      <div class="isle-desc">${t().freePracticeDesc}</div>
+    </div>`);
+  makeClickable(freeCard, ()=>{ currentChapter='free'; view='freepractice'; render(); });
+  stage.appendChild(freeCard);
+}
+
+/* ---------------- Free practice ---------------- */
+function renderFreePractice(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='map'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>${t().freePractice}</h2>`));
+  stage.appendChild(el(`<p class="lead">${t().freePracticeDesc}</p>`));
+  const box = el(`<div class="custom-box">
+      <input type="text" id="customWord" placeholder="${t().customPh}" dir="${t().dir}">
+      <button class="btn btn-primary">${t().customGo}</button>
+    </div>`);
+  stage.appendChild(box);
+  const input = box.querySelector('#customWord');
+  const go = ()=>{
+    const v = input.value.trim();
+    if(!v) return;
+    currentTarget = v; view='trace'; render();
+  };
+  box.querySelector('button').onclick = go;
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
+  setTimeout(()=>input.focus(), 0);
+}
+
+/* ---------------- Memory Bay: look, cover, write, check ---------------- */
+function renderMemoryPeek(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='levels'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>🧠 ${t().islandMemory}</h2>`));
+  stage.appendChild(el(`<p class="lead">${t().memoryLook}</p>`));
+  const peekFont = state.lang==='ar' ? "'Noto Naskh Arabic',serif" : state.lang==='fr' ? "'Playwrite FR Trad',cursive" : "'Playwrite US Modern',cursive";
+  const bigWord = el(`<div dir="${t().dir}" style="font-family:${peekFont}; font-weight:700; font-size:clamp(1.8rem,8vw,3rem); text-align:center; padding:34px 14px; background:${'#9B6BFF'}18; border:3px dashed var(--grape); border-radius:18px; color:var(--ink);">${escapeHtml(currentTarget||'')}</div>`);
+  stage.appendChild(bigWord);
+  const readyBtn = el(`<button class="btn btn-primary" style="margin-top:16px;">🙈 ${t().memoryReady}</button>`);
+  readyBtn.onclick = ()=>{ renderMemoryWrite(stage); };
+  stage.appendChild(readyBtn);
+}
+
+function renderMemoryWrite(stage){
+  stage.innerHTML = "";
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='levels'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>🧠 ${t().memoryWritePrompt}</h2>`));
+
+  const viewportW = Math.min(760, window.innerWidth - 70);
+  const layout = layoutText(currentTarget || '', viewportW*0.92);
+  const width = viewportW;
+  const height = Math.max(170, Math.round(layout.lines.length*layout.lineHeight + 24));
+  const canvasWrap = el(`<div class="canvas-wrap"></div>`);
+  canvasWrap.style.height = height+'px';
+  canvasWrap.style.width = width+'px';
+  canvasWrap.style.margin = '8px auto 0';
+  const drawCanvas = document.createElement('canvas');
+  drawCanvas.width=width; drawCanvas.height=height; drawCanvas.className='canvas-layer';
+  drawCanvas.style.position='relative';
+  drawCanvas.style.width = width+'px'; drawCanvas.style.height = height+'px';
+  canvasWrap.appendChild(drawCanvas);
+  stage.appendChild(canvasWrap);
+
+  // hidden reference masks used only for scoring — never shown to the learner
+  const rawGuide = document.createElement('canvas'); rawGuide.width=width; rawGuide.height=height;
+  drawGlyph(rawGuide.getContext('2d'), currentTarget, width, height, false);
+  const dilatedGuide = document.createElement('canvas'); dilatedGuide.width=width; dilatedGuide.height=height;
+  const dgctx = dilatedGuide.getContext('2d');
+  try{ dgctx.filter = 'blur('+toleranceForTier()+'px)'; }catch(e){}
+  drawGlyph(dgctx, currentTarget, width, height, false);
+
+  const dctx2 = drawCanvas.getContext('2d');
+  dctx2.lineJoin='round'; dctx2.lineCap='round'; dctx2.strokeStyle = '#00967F';
+  let drawing=false, lastPt=null, pathLength=0;
+  function pos(e){
+    const r = drawCanvas.getBoundingClientRect();
+    const cx = (e.touches? e.touches[0].clientX : e.clientX) - r.left;
+    const cy = (e.touches? e.touches[0].clientY : e.clientY) - r.top;
+    return { x: cx*(width/r.width), y: cy*(height/r.height) };
+  }
+  function start(e){ e.preventDefault(); drawing=true; lastPt=pos(e); }
+  function move(e){
+    if(!drawing) return; e.preventDefault();
+    const p = pos(e);
+    dctx2.lineWidth = state.penWidth;
+    dctx2.beginPath(); dctx2.moveTo(lastPt.x,lastPt.y); dctx2.lineTo(p.x,p.y); dctx2.stroke();
+    pathLength += Math.hypot(p.x-lastPt.x, p.y-lastPt.y);
+    lastPt = p;
+  }
+  function end(){ drawing=false; }
+  ['mousedown','touchstart'].forEach(ev=>drawCanvas.addEventListener(ev,start,{passive:false}));
+  ['mousemove','touchmove'].forEach(ev=>drawCanvas.addEventListener(ev,move,{passive:false}));
+  ['mouseup','mouseleave','touchend'].forEach(ev=>drawCanvas.addEventListener(ev,end));
+
+  const tools = el(`<div class="tools"></div>`);
+  const penTool = el(`<div class="tool"><label>${t().penSize}</label><input type="range" min="6" max="26" step="2" value="${state.penWidth}"></div>`);
+  penTool.querySelector('input').oninput = (e)=>{ state.penWidth = parseInt(e.target.value); };
+  tools.appendChild(penTool);
+  stage.appendChild(tools);
+
+  const btnRow = el(`<div class="btn-row"></div>`);
+  const clearBtn = el(`<button class="btn btn-secondary">${t().clearBtn}</button>`);
+  clearBtn.onclick = ()=>{ dctx2.clearRect(0,0,width,height); pathLength=0; };
+  const checkBtn = el(`<button class="btn btn-primary">${t().checkBtn}</button>`);
+  const feedback = el(`<div class="feedback-banner"></div>`);
+  checkBtn.onclick = ()=>{
+    try{
+      const scoreResult = scoreDrawing(drawCanvas, rawGuide, dilatedGuide, width, height);
+      scoreResult.pathRatio = pathLength / expectedPathLength(scoreResult.guidePixelCount, state.penWidth);
+      const stars = starsFromScore(scoreResult);
+      const targetKey = state.lang+':'+currentTarget;
+      const prev = (state.completed.memory||{})[targetKey] || 0;
+      if(stars > prev){
+        state.stars += (stars - prev);
+        state.completed.memory = state.completed.memory || {};
+        state.completed.memory[targetKey] = stars;
+        maybeAwardBadges();
+        saveProgress();
+      }
+      feedback.className = 'feedback-banner show ' + (stars>=3?'fb-great':stars>=1?'fb-ok':'fb-retry');
+      const msg = stars>=3 ? t().fbGreat : stars>=1 ? t().fbOk : t().fbRetry;
+      feedback.innerHTML = `<div><div class="stars-earned">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+        <div>${msg}</div>
+        <div dir="${t().dir}" style="margin-top:6px;font-weight:800;">${t().memoryReveal} <span style="color:var(--grape);">${escapeHtml(currentTarget)}</span></div></div>`;
+      render_topbarStarsOnly();
+    }catch(err){
+      console.error('Handwriting Quest memory scoring error:', err);
+      feedback.className = 'feedback-banner show fb-retry';
+      feedback.textContent = state.lang==='ar' ? "تعذّر تقييم الكتابة، حاول مرة أخرى." : state.lang==='fr' ? "Impossible d'évaluer l'écriture, réessaie." : "Couldn't score that attempt — please try again.";
+    }
+  };
+  btnRow.appendChild(clearBtn); btnRow.appendChild(checkBtn);
+  stage.appendChild(btnRow);
+  stage.appendChild(feedback);
+}
+
+/* ---------------- Level picker ---------------- */
+function renderLevels(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='map'; render(); };
+  stage.appendChild(backBtn);
+
+  const chapterTitle = currentChapter==='letters'?t().islandLetters:currentChapter==='numbers'?t().islandNumbers:currentChapter==='words'?t().islandWords:currentChapter==='memory'?t().islandMemory:t().islandSentences;
+  stage.appendChild(el(`<h2>${chapterTitle}</h2>`));
+  stage.appendChild(el(`<p class="lead">${currentChapter==='memory' ? t().islandMemoryDesc : t().pickLevel}</p>`));
+
+  const items = currentChapter==='letters' ? BANKS[state.lang].letters
+              : currentChapter==='numbers' ? BANKS[state.lang].numbers[state.tier]
+              : (currentChapter==='words' || currentChapter==='memory') ? BANKS[state.lang].words[state.tier]
+              : BANKS[state.lang].sentences;
+
+  const grid = el(`<div class="level-grid"></div>`);
+  items.forEach((word,i)=>{
+    const key = state.lang+':'+word;
+    const earned = (state.completed[currentChapter]||{})[key] || 0;
+    const btn = el(`<button class="level-btn ${earned>0?'done':''}" dir="${t().dir}">
+        <span style="font-family:${currentChapter==='numbers'?'inherit':handwritingFontCss(word)}; font-size:${currentChapter==='numbers'?'inherit':'1.15em'};">${escapeHtml(word)}</span><span class="lvl-stars">${earned>0? '⭐'.repeat(earned) : '·'}</span>
+      </button>`);
+    btn.onclick = ()=>{
+      currentTarget = word;
+      if(currentChapter==='memory'){ view='memory-peek'; } else { view='trace'; }
+      render();
+    };
+    grid.appendChild(btn);
+  });
+  stage.appendChild(grid);
+
+  if(currentChapter!=='memory'){
+  const customWrap = el(`<div><p class="lead" style="margin-bottom:6px;">${t().customLabel}</p>
+      <div class="custom-box">
+        <input type="text" id="customWord" placeholder="${t().customPh}" dir="${t().dir}">
+        <button class="btn btn-secondary" id="customGo">${t().customGo}</button>
+      </div></div>`);
+  stage.appendChild(customWrap);
+  customWrap.querySelector('#customGo').onclick = ()=>{
+    const v = customWrap.querySelector('#customWord').value.trim();
+    if(!v) return;
+    currentTarget = v; view='trace'; render();
+  };
+  }
+}
+
+/* ---------------- Warm-up picker ---------------- */
+const PATTERNS = ['wave','zig','loop','diag','circle','bridge'];
+let warmupPrecision = false;
+function renderWarmupPicker(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='map'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>${t().islandWarmup}</h2>`));
+  stage.appendChild(el(`<p class="lead">${t().warmupInstruction}</p>`));
+
+  const modeSwitch = el(`<div class="lang-switch" style="margin-bottom:12px;"></div>`);
+  [[false,'🐣 '+t().precisionBasic],[true,'🎯 '+t().precisionAdvanced]].forEach(([val,label])=>{
+    const b = el(`<button type="button">${label}</button>`);
+    if(warmupPrecision===val) b.classList.add('active');
+    b.onclick = ()=>{ warmupPrecision = val; render(); };
+    modeSwitch.appendChild(b);
+  });
+  stage.appendChild(modeSwitch);
+  if(warmupPrecision) stage.appendChild(el(`<p class="lead" style="margin-top:-8px;">${t().precisionHint}</p>`));
+
+  const grid = el(`<div class="level-grid"></div>`);
+  const labels = { wave:t().patternWave, zig:t().patternZig, loop:t().patternLoop, diag:t().patternDiag, circle:t().patternCircle, bridge:t().patternBridge };
+  const icons = { wave:'〜', zig:'⚡', loop:'➰', diag:'╱', circle:'⭕', bridge:'⛰️' };
+  PATTERNS.forEach(p=>{
+    const key = state.lang+':'+p+(warmupPrecision?':precision':'');
+    const earned = (state.completed.warmup||{})[key] || 0;
+    const btn = el(`<button class="level-btn ${earned>0?'done':''}" style="min-width:130px;">
+        <span style="font-size:1.3rem;">${icons[p]}</span><br><span style="font-size:.72rem;">${labels[p]}</span>
+        <span class="lvl-stars">${earned>0? '⭐'.repeat(earned) : '·'}</span>
+      </button>`);
+    btn.onclick = ()=>{ currentPatternKey = p; currentChapter='warmup'; view='trace'; render(); };
+    grid.appendChild(btn);
+  });
+  stage.appendChild(grid);
+}
+
+/* ---------------- Tracing engine (shared by letters/words/sentences/warmup) ---------------- */
+function renderTrace(stage){ renderTraceStage(stage, currentChapter==='warmup'); }
+
+function renderTraceStage(stage, isWarmup){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view = isWarmup ? 'warmup' : (currentChapter==='free' ? 'freepractice' : 'levels'); render(); };
+  stage.appendChild(backBtn);
+
+  const label = isWarmup
+    ? ({wave:t().patternWave,zig:t().patternZig,loop:t().patternLoop,diag:t().patternDiag,circle:t().patternCircle,bridge:t().patternBridge})[currentPatternKey]
+    : escapeHtml(currentTarget || "");
+  const labelFont = (isWarmup || currentChapter==='numbers') ? 'inherit' : handwritingFontCss(currentTarget);
+  stage.appendChild(el(`<h2 dir="${isWarmup?'ltr':t().dir}" style="font-family:${labelFont};">${label}</h2>`));
+  if(!isWarmup) stage.appendChild(el(`<p class="lead">${t().pickLevel==='' ? '' : ''}</p>`));
+
+  const canvasWrap = el(`<div class="canvas-wrap"></div>`);
+  let width, height;
+  if(isWarmup){
+    width = Math.min(820, window.innerWidth - 70);
+    height = 220;
+  } else {
+    const viewportW = Math.min(760, window.innerWidth - 70);
+    const layout = layoutText(currentTarget || '', viewportW*0.92);
+    width = viewportW;
+    height = Math.max(170, Math.round(layout.lines.length*layout.lineHeight + 24));
+  }
+  const guideCanvas = document.createElement('canvas');
+  guideCanvas.width = width; guideCanvas.height = height; guideCanvas.className='canvas-layer';
+  guideCanvas.style.position='relative'; guideCanvas.style.zIndex=1;
+  guideCanvas.style.width = width+'px'; guideCanvas.style.height = height+'px';
+  const drawCanvas = document.createElement('canvas');
+  drawCanvas.width = width; drawCanvas.height = height; drawCanvas.className='canvas-layer';
+  drawCanvas.style.position='absolute'; drawCanvas.style.top=0; drawCanvas.style.left=0; drawCanvas.style.zIndex=2;
+  drawCanvas.style.width = width+'px'; drawCanvas.style.height = height+'px';
+  canvasWrap.style.height = height+'px';
+  canvasWrap.style.width = width+'px';
+  canvasWrap.style.margin = '8px auto 0';
+  canvasWrap.appendChild(guideCanvas);
+  canvasWrap.appendChild(drawCanvas);
+  stage.appendChild(canvasWrap);
+
+  // build guide
+  const precisionOn = isWarmup && warmupPrecision;
+  const roadWidth = precisionOn ? 16 : 30;
+  const gctx = guideCanvas.getContext('2d');
+  gctx.clearRect(0,0,width,height);
+  gctx.globalAlpha = state.guideOpacity;
+  if(isWarmup){ drawPattern(gctx, currentPatternKey, width, height, false, roadWidth); }
+  else { drawGlyph(gctx, currentTarget, width, height, false); }
+  gctx.globalAlpha = 1;
+
+  // offscreen raw + dilated guide masks for scoring
+  const rawGuide = document.createElement('canvas'); rawGuide.width=width; rawGuide.height=height;
+  const rctx = rawGuide.getContext('2d');
+  if(isWarmup) drawPattern(rctx, currentPatternKey, width, height, false, roadWidth);
+  else drawGlyph(rctx, currentTarget, width, height, false);
+
+  const tolerance = Math.max(state.penWidth*0.5, precisionOn ? toleranceForTier()*0.55 : toleranceForTier());
+  const dilatedGuide = document.createElement('canvas'); dilatedGuide.width=width; dilatedGuide.height=height;
+  const dctx = dilatedGuide.getContext('2d');
+  try{ dctx.filter = 'blur('+tolerance+'px)'; }catch(e){}
+  if(isWarmup) drawPattern(dctx, currentPatternKey, width, height, false, roadWidth);
+  else drawGlyph(dctx, currentTarget, width, height, false);
+
+  // drawing interactions
+  const dctx2 = drawCanvas.getContext('2d');
+  dctx2.lineJoin='round'; dctx2.lineCap='round';
+  dctx2.strokeStyle = '#00967F';
+  let drawing=false, lastPt=null, pathLength=0;
+  function pos(e){
+    const r = drawCanvas.getBoundingClientRect();
+    const cx = (e.touches? e.touches[0].clientX : e.clientX) - r.left;
+    const cy = (e.touches? e.touches[0].clientY : e.clientY) - r.top;
+    return { x: cx*(width/r.width), y: cy*(height/r.height) };
+  }
+  function start(e){ e.preventDefault(); drawing=true; lastPt=pos(e); }
+  function move(e){
+    if(!drawing) return; e.preventDefault();
+    const p = pos(e);
+    dctx2.lineWidth = state.penWidth;
+    dctx2.beginPath(); dctx2.moveTo(lastPt.x,lastPt.y); dctx2.lineTo(p.x,p.y); dctx2.stroke();
+    pathLength += Math.hypot(p.x-lastPt.x, p.y-lastPt.y);
+    lastPt = p;
+  }
+  function end(e){ drawing=false; }
+  ['mousedown','touchstart'].forEach(ev=>drawCanvas.addEventListener(ev,start,{passive:false}));
+  ['mousemove','touchmove'].forEach(ev=>drawCanvas.addEventListener(ev,move,{passive:false}));
+  ['mouseup','mouseleave','touchend'].forEach(ev=>drawCanvas.addEventListener(ev,end));
+
+  // tools
+  const tools = el(`<div class="tools"></div>`);
+  const guideTool = el(`<div class="tool"><label>${t().showGuide}</label><input type="range" min="0.05" max="0.6" step="0.05" value="${state.guideOpacity}"></div>`);
+  guideTool.querySelector('input').oninput = (e)=>{ state.guideOpacity = parseFloat(e.target.value); gctx.clearRect(0,0,width,height); gctx.globalAlpha=state.guideOpacity; if(isWarmup) drawPattern(gctx,currentPatternKey,width,height,false); else drawGlyph(gctx,currentTarget,width,height,false); gctx.globalAlpha=1; };
+  const penTool = el(`<div class="tool"><label>${t().penSize}</label><input type="range" min="6" max="26" step="2" value="${state.penWidth}"></div>`);
+  penTool.querySelector('input').oninput = (e)=>{ state.penWidth = parseInt(e.target.value); };
+  tools.appendChild(guideTool); tools.appendChild(penTool);
+  stage.appendChild(tools);
+
+  const btnRow = el(`<div class="btn-row"></div>`);
+  const clearBtn = el(`<button class="btn btn-secondary">${t().clearBtn}</button>`);
+  clearBtn.onclick = ()=>{ dctx2.clearRect(0,0,width,height); pathLength=0; };
+  const checkBtn = el(`<button class="btn btn-primary">${t().checkBtn}</button>`);
+  const feedback = el(`<div class="feedback-banner"></div>`);
+  checkBtn.onclick = ()=>{
+    try{
+    const scoreResult = scoreDrawing(drawCanvas, rawGuide, dilatedGuide, width, height, tolerance);
+    scoreResult.pathRatio = pathLength / expectedPathLength(scoreResult.guidePixelCount, state.penWidth);
+    let stars = starsFromScore(scoreResult);
+
+    const chapterKey = isWarmup ? 'warmup' : currentChapter;
+    const targetKey = isWarmup ? state.lang+':'+currentPatternKey+(precisionOn?':precision':'') : state.lang+':'+currentTarget;
+    const prev = (state.completed[chapterKey]||{})[targetKey] || 0;
+    if(stars > prev){
+      state.stars += (stars - prev);
+      state.completed[chapterKey] = state.completed[chapterKey] || {};
+      state.completed[chapterKey][targetKey] = stars;
+      maybeAwardBadges();
+      saveProgress();
+    }
+
+    feedback.className = 'feedback-banner show ' + (stars>=3?'fb-great':stars>=1?'fb-ok':'fb-retry');
+    const msg = stars>=3 ? t().fbGreat : stars>=1 ? t().fbOk : t().fbRetry;
+    const enc = t().encouragements[Math.floor(Math.random()*t().encouragements.length)];
+    feedback.innerHTML = `<div><div class="stars-earned">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+      <div>${msg}</div><div style="opacity:.7;font-weight:600;font-size:.85rem;margin-top:2px;">${enc}</div></div>`;
+    render_topbarStarsOnly();
+    }catch(err){
+      console.error('Handwriting Quest scoring error:', err);
+      feedback.className = 'feedback-banner show fb-retry';
+      feedback.textContent = state.lang==='ar' ? "تعذّر تقييم الكتابة، حاول مرة أخرى." : state.lang==='fr' ? "Impossible d'évaluer l'écriture, réessaie." : "Couldn't score that attempt — please try again.";
+    }
+  };
+  btnRow.appendChild(clearBtn); btnRow.appendChild(checkBtn);
+  stage.appendChild(btnRow);
+  stage.appendChild(feedback);
+}
+function render_topbarStarsOnly(){
+  const pill = document.querySelector('.stars-pill');
+  if(pill) pill.textContent = `⭐ ${state.stars} ${t().starsLabel}`;
+}
+
+/* ---------------- Print Studio: real pen-and-paper worksheets ---------------- */
+let printType = 'letters';
+let printSelected = new Set();
+
+function buildWorksheet(items){
+  const dir = t().dir;
+  const wsFont = state.lang==='ar' ? "'Noto Naskh Arabic',serif" : state.lang==='fr' ? "'Playwrite FR Trad',cursive" : "'Playwrite US Modern',cursive";
+  const rows = items.map(w=>{
+    const reps = [`<span class="ws-model">${escapeHtml(w)}</span>`]
+      .concat(Array(3).fill(`<span class="ws-ghost">${escapeHtml(w)}</span>`))
+      .join('');
+    return `<div class="ws-row">
+        <div class="ws-line" dir="${dir}" style="font-family:${wsFont};">${reps}</div>
+        <div class="ws-blank-line"></div>
+      </div>`;
+  }).join('');
+  let today = '';
+  try{ today = new Date().toLocaleDateString(state.lang==='ar'?'ar':state.lang==='fr'?'fr-FR':'en-US'); }catch(e){}
+  return `<div class="worksheet-page" dir="${dir}">
+      <h2>${t().printTitle}</h2>
+      <p class="ws-sub">${state.name? escapeHtml(state.name)+' · ' : ''}${today}</p>
+      ${rows}
+    </div>`;
+}
+
+function buildProgressReport(){
+  const dir = t().dir;
+  const chapters = ['warmup','letters','numbers','words','memory','sentences'];
+  const chapterLabel = { warmup:t().islandWarmup, letters:t().islandLetters, numbers:t().islandNumbers, words:t().islandWords, memory:t().islandMemory, sentences:t().islandSentences };
+  const rows = chapters.map(c=>{
+    const earned = starsForChapter(c);
+    return `<div style="display:flex; justify-content:space-between; padding:6px 2px; border-bottom:1px solid #ddd; font-size:1.05rem;">
+        <span>${escapeHtml(chapterLabel[c])}</span><span>⭐ ${earned}</span>
+      </div>`;
+  }).join('');
+  const badgesHtml = state.badges.length
+    ? state.badges.map(b=> `${BADGE_ICON[b]||'🏅'} ${escapeHtml(t()[BADGE_LABELS[b]]||b)}`).join(' &nbsp;·&nbsp; ')
+    : t().reportNone;
+  let today = '';
+  try{ today = new Date().toLocaleDateString(state.lang==='ar'?'ar':state.lang==='fr'?'fr-FR':'en-US'); }catch(e){}
+  return `<div class="worksheet-page" dir="${dir}">
+      <h2>${t().reportSubtitle}</h2>
+      <p class="ws-sub">${state.name? escapeHtml(state.name)+' · ' : ''}${t().reportDate}: ${today}</p>
+      <p style="margin:12px 0; font-size:1.1rem;"><strong>${t().reportStars}:</strong> ⭐ ${state.stars}
+        &nbsp;&nbsp;&nbsp; <strong>${t().reportStreak}:</strong> 🔥 ${state.streak||0}</p>
+      <p style="margin:16px 0 6px; font-weight:800;">${t().reportChapterProgress}</p>
+      ${rows}
+      <p style="margin:18px 0 6px; font-weight:800;">${t().reportBadges}</p>
+      <p style="margin:0 0 40px;">${badgesHtml}</p>
+      <div style="border-top:1.5px solid #333; width:280px; padding-top:6px; font-size:.9rem; opacity:.8;">${t().reportSignature}</div>
+    </div>`;
+}
+
+/* ---------------- Privacy & Terms ---------------- */
+function renderPrivacy(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view = state.onboarded ? 'map' : 'onboard'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>📜 ${t().privacyTitle}</h2>`));
+  stage.appendChild(el(`<div style="border:2px solid var(--coral); background:#FFE9EF; border-radius:14px; padding:12px 14px; margin-bottom:14px; font-weight:700; font-size:.9rem; line-height:1.5;">${escapeHtml(t().privacyDisclaimer)}</div>`));
+
+  function section(title, body){
+    return el(`<div style="margin-bottom:16px;">
+        <h3 style="margin:0 0 6px; font-size:1.02rem;">${escapeHtml(title)}</h3>
+        <p style="margin:0; font-size:.92rem; line-height:1.6; opacity:.85;">${escapeHtml(body)}</p>
+      </div>`);
+  }
+  stage.appendChild(section(t().privacyWhatTitle, t().privacyWhat));
+  stage.appendChild(section(t().privacyChildrenTitle, t().privacyChildren));
+  stage.appendChild(section(t().privacyControlTitle, t().privacyControl));
+  stage.appendChild(section(t().privacyContactTitle, t().privacyContact));
+}
+
+/* ---------------- Group Mode: turn-based practice for 2-4 learners ---------------- */
+let groupSetupSelected = new Set();
+
+function pickGroupTarget(){
+  if(groupChapterType==='warmup'){
+    groupTarget = PATTERNS[Math.floor(Math.random()*PATTERNS.length)];
+  } else {
+    const bank = groupChapterType==='letters' ? BANKS[state.lang].letters
+               : groupChapterType==='numbers' ? BANKS[state.lang].numbers[state.tier]
+               : groupChapterType==='words' ? BANKS[state.lang].words[state.tier]
+               : BANKS[state.lang].sentences;
+    groupTarget = bank[Math.floor(Math.random()*bank.length)];
+  }
+}
+
+function renderGroupSetup(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='map'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>👥 ${t().groupSetupTitle}</h2>`));
+  stage.appendChild(el(`<p class="lead">${t().groupPickLearners}</p>`));
+
+  const grid = el(`<div class="islands"></div>`);
+  profilesList.forEach(p=>{
+    const selected = groupSetupSelected.has(p.id);
+    const card = el(`<div class="island ${selected?'selected':''}" style="cursor:pointer; text-align:center; align-items:center; ${selected?'border-color:var(--coral); background:#FF5C8A18;':''}">
+        <div style="font-size:2.2rem;">${p.avatar||'🦊'}</div>
+        <h3>${escapeHtml(p.name||'')}</h3>
+      </div>`);
+    makeClickable(card, ()=>{
+      if(selected){ groupSetupSelected.delete(p.id); }
+      else if(groupSetupSelected.size<4){ groupSetupSelected.add(p.id); }
+      render();
+    });
+    grid.appendChild(card);
+  });
+  stage.appendChild(grid);
+
+  stage.appendChild(el(`<p class="lead" style="margin-top:16px;margin-bottom:4px;"><strong>${t().groupPickActivity}</strong></p>`));
+  const typeSwitch = el(`<div class="lang-switch print-controls"></div>`);
+  [['letters',t().groupTypeLetters],['numbers',t().groupTypeNumbers],['words',t().groupTypeWords],['sentences',t().groupTypeSentences],['warmup',t().groupTypeWarmup]].forEach(([val,label])=>{
+    const b = el(`<button type="button">${label}</button>`);
+    if(groupChapterType===val || (!groupChapterType && val==='words')) b.classList.add('active');
+    b.onclick = ()=>{ groupChapterType=val; render(); };
+    typeSwitch.appendChild(b);
+  });
+  stage.appendChild(typeSwitch);
+  if(!groupChapterType) groupChapterType='words';
+
+  if(groupChapterType==='numbers' || groupChapterType==='words'){
+    const tierRow = el(`<div class="pickrow" style="margin:10px 0;"></div>`);
+    [["A",t().tierA],["B",t().tierB],["C",t().tierC]].forEach(([code,label])=>{
+      const c = el(`<div class="pickcard ${state.tier===code?'selected':''}" style="padding:8px;">${label}</div>`);
+      makeClickable(c, ()=>{ state.tier=code; render(); });
+      tierRow.appendChild(c);
+    });
+    stage.appendChild(tierRow);
+  }
+
+  const startBtn = el(`<button class="btn btn-primary" style="margin-top:14px;" ${groupSetupSelected.size<2?'disabled':''}>🚀 ${t().groupStartBtn}</button>`);
+  startBtn.onclick = ()=>{
+    if(groupSetupSelected.size<2) return;
+    groupMembers = Array.from(groupSetupSelected).map(id=>profilesList.find(p=>p.id===id)).filter(Boolean);
+    groupHostProfileId = currentProfileId;
+    groupTurnIndex = 0;
+    groupResults = [];
+    groupPhase = 'pass';
+    pickGroupTarget();
+    view='group-trace'; render();
+  };
+  stage.appendChild(startBtn);
+}
+
+function renderGroupTrace(stage){
+  const member = groupMembers[groupTurnIndex];
+  if(!member){ view='map'; render(); return; }
+
+  if(groupPhase==='pass'){
+    stage.appendChild(el(`<h2 style="text-align:center;">${escapeHtml(t().groupTurnPrompt(member.name))}</h2>`));
+    stage.appendChild(el(`<div style="font-size:4.5rem;text-align:center;margin:22px 0;">${member.avatar||'🦊'}</div>`));
+    stage.appendChild(el(`<p class="lead" style="text-align:center;">${t().groupPassPrompt}</p>`));
+    const readyBtn = el(`<button class="btn btn-primary" style="display:block;margin:18px auto 0;">🙋 ${t().groupReadyBtn}</button>`);
+    readyBtn.onclick = async ()=>{
+      currentProfileId = member.id;
+      await loadProfileState(member.id);
+      groupPhase = 'trace';
+      render();
+    };
+    stage.appendChild(readyBtn);
+    const exitBtn = el(`<button class="btn btn-ghost" style="display:block;margin:24px auto 0;">← ${t().groupBackBtn}</button>`);
+    exitBtn.onclick = ()=>{ view='map'; render(); };
+    stage.appendChild(exitBtn);
+    return;
+  }
+
+  // ---- active tracing turn ----
+  const isWarmup = groupChapterType==='warmup';
+  stage.appendChild(el(`<div style="text-align:center;font-weight:800;color:var(--coral-deep);margin-bottom:4px;">${member.avatar||'🦊'} ${escapeHtml(member.name)}</div>`));
+  const label = isWarmup
+    ? ({wave:t().patternWave,zig:t().patternZig,loop:t().patternLoop,diag:t().patternDiag,circle:t().patternCircle,bridge:t().patternBridge})[groupTarget]
+    : escapeHtml(groupTarget);
+  const labelFont = (isWarmup || groupChapterType==='numbers') ? 'inherit' : handwritingFontCss(groupTarget);
+  stage.appendChild(el(`<h2 style="text-align:center;font-family:${labelFont};" dir="${isWarmup?'ltr':t().dir}">${label}</h2>`));
+
+  let width, height;
+  if(isWarmup){ width = Math.min(820, window.innerWidth-70); height = 220; }
+  else {
+    const viewportW = Math.min(760, window.innerWidth-70);
+    const layout = layoutText(groupTarget||'', viewportW*0.92);
+    width = viewportW;
+    height = Math.max(170, Math.round(layout.lines.length*layout.lineHeight + 24));
+  }
+  const canvasWrap = el(`<div class="canvas-wrap"></div>`);
+  canvasWrap.style.height = height+'px'; canvasWrap.style.width = width+'px'; canvasWrap.style.margin='8px auto 0';
+  const guideCanvas = document.createElement('canvas');
+  guideCanvas.width=width; guideCanvas.height=height; guideCanvas.className='canvas-layer';
+  guideCanvas.style.position='relative'; guideCanvas.style.zIndex=1;
+  guideCanvas.style.width=width+'px'; guideCanvas.style.height=height+'px';
+  const drawCanvas = document.createElement('canvas');
+  drawCanvas.width=width; drawCanvas.height=height; drawCanvas.className='canvas-layer';
+  drawCanvas.style.position='absolute'; drawCanvas.style.top=0; drawCanvas.style.left=0; drawCanvas.style.zIndex=2;
+  drawCanvas.style.width=width+'px'; drawCanvas.style.height=height+'px';
+  canvasWrap.appendChild(guideCanvas); canvasWrap.appendChild(drawCanvas);
+  stage.appendChild(canvasWrap);
+
+  const gctx = guideCanvas.getContext('2d');
+  gctx.globalAlpha = state.guideOpacity;
+  if(isWarmup) drawPattern(gctx, groupTarget, width, height, false, 30); else drawGlyph(gctx, groupTarget, width, height, false);
+  gctx.globalAlpha = 1;
+
+  const rawGuide = document.createElement('canvas'); rawGuide.width=width; rawGuide.height=height;
+  if(isWarmup) drawPattern(rawGuide.getContext('2d'), groupTarget, width, height, false, 30); else drawGlyph(rawGuide.getContext('2d'), groupTarget, width, height, false);
+  const tolerance = toleranceForTier();
+  const dilatedGuide = document.createElement('canvas'); dilatedGuide.width=width; dilatedGuide.height=height;
+  const dgctx = dilatedGuide.getContext('2d');
+  try{ dgctx.filter='blur('+tolerance+'px)'; }catch(e){}
+  if(isWarmup) drawPattern(dgctx, groupTarget, width, height, false, 30); else drawGlyph(dgctx, groupTarget, width, height, false);
+
+  const dctx2 = drawCanvas.getContext('2d');
+  dctx2.lineJoin='round'; dctx2.lineCap='round'; dctx2.strokeStyle='#00967F';
+  let drawing=false, lastPt=null, pathLength=0;
+  function pos(e){ const r=drawCanvas.getBoundingClientRect(); const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top; return {x:cx*(width/r.width), y:cy*(height/r.height)}; }
+  function start(e){ e.preventDefault(); drawing=true; lastPt=pos(e); }
+  function move(e){ if(!drawing) return; e.preventDefault(); const p=pos(e); dctx2.lineWidth=state.penWidth; dctx2.beginPath(); dctx2.moveTo(lastPt.x,lastPt.y); dctx2.lineTo(p.x,p.y); dctx2.stroke(); pathLength += Math.hypot(p.x-lastPt.x, p.y-lastPt.y); lastPt=p; }
+  function end(){ drawing=false; }
+  ['mousedown','touchstart'].forEach(ev=>drawCanvas.addEventListener(ev,start,{passive:false}));
+  ['mousemove','touchmove'].forEach(ev=>drawCanvas.addEventListener(ev,move,{passive:false}));
+  ['mouseup','mouseleave','touchend'].forEach(ev=>drawCanvas.addEventListener(ev,end));
+
+  const btnRow = el(`<div class="btn-row"></div>`);
+  const clearBtn = el(`<button class="btn btn-secondary">${t().clearBtn}</button>`);
+  clearBtn.onclick = ()=>{ dctx2.clearRect(0,0,width,height); pathLength=0; };
+  const checkBtn = el(`<button class="btn btn-primary">${t().checkBtn}</button>`);
+  const feedback = el(`<div class="feedback-banner"></div>`);
+  checkBtn.onclick = ()=>{
+    try{
+      const scoreResult = scoreDrawing(drawCanvas, rawGuide, dilatedGuide, width, height, tolerance);
+      scoreResult.pathRatio = pathLength / expectedPathLength(scoreResult.guidePixelCount, state.penWidth);
+      const stars = starsFromScore(scoreResult);
+      const chapterKey = isWarmup ? 'warmup' : groupChapterType;
+      const targetKey = state.lang+':'+groupTarget;
+      const prev = (state.completed[chapterKey]||{})[targetKey] || 0;
+      if(stars>prev){
+        state.stars += (stars-prev);
+        state.completed[chapterKey] = state.completed[chapterKey] || {};
+        state.completed[chapterKey][targetKey] = stars;
+        maybeAwardBadges();
+        saveProgress();
+      }
+      groupResults.push({id:member.id, name:member.name, avatar:member.avatar, stars});
+      feedback.className = 'feedback-banner show ' + (stars>=3?'fb-great':stars>=1?'fb-ok':'fb-retry');
+      const msg = stars>=3?t().fbGreat:stars>=1?t().fbOk:t().fbRetry;
+      const isLast = groupTurnIndex >= groupMembers.length-1;
+      feedback.innerHTML = `<div><div class="stars-earned">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div><div>${msg}</div></div>`;
+      checkBtn.style.display='none'; clearBtn.style.display='none';
+      const nextBtn = el(`<button class="btn btn-primary" style="margin-top:10px;">${isLast? '🏁 '+t().groupSeeResultsBtn : '➡️ '+t().groupNextBtn}</button>`);
+      nextBtn.onclick = async ()=>{
+        groupTurnIndex++;
+        if(groupTurnIndex < groupMembers.length){ groupPhase='pass'; render(); }
+        else{
+          if(groupHostProfileId){ currentProfileId=groupHostProfileId; await loadProfileState(groupHostProfileId); }
+          view='group-results'; render();
+        }
+      };
+      feedback.appendChild(nextBtn);
+    }catch(err){
+      console.error('Group Mode scoring error:', err);
+      feedback.className='feedback-banner show fb-retry';
+      feedback.textContent = state.lang==='ar' ? "تعذّر تقييم الكتابة، حاول مرة أخرى." : state.lang==='fr' ? "Impossible d'évaluer l'écriture, réessaie." : "Couldn't score that attempt — please try again.";
+    }
+  };
+  btnRow.appendChild(clearBtn); btnRow.appendChild(checkBtn);
+  stage.appendChild(btnRow);
+  stage.appendChild(feedback);
+}
+
+function renderGroupResults(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='map'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>🎉 ${t().groupResultsTitle}</h2>`));
+  const total = groupResults.reduce((a,r)=>a+r.stars,0);
+  stage.appendChild(el(`<div class="stars-pill" style="font-size:1.1rem;margin:10px 0;">⭐ ${t().groupTeamStars}: ${total}</div>`));
+  const list = el(`<div class="islands"></div>`);
+  groupResults.forEach(r=>{
+    list.appendChild(el(`<div class="island" style="text-align:center;align-items:center;">
+        <div style="font-size:2rem;">${r.avatar||'🦊'}</div>
+        <h3>${escapeHtml(r.name)}</h3>
+        <div>${'⭐'.repeat(r.stars)}${'☆'.repeat(3-r.stars)}</div>
+      </div>`));
+  });
+  stage.appendChild(list);
+  const btnRow = el(`<div class="btn-row" style="margin-top:16px;"></div>`);
+  const againBtn = el(`<button class="btn btn-primary">🔁 ${t().groupPlayAgainBtn}</button>`);
+  againBtn.onclick = ()=>{
+    groupTurnIndex=0; groupResults=[]; groupPhase='pass';
+    pickGroupTarget();
+    view='group-trace'; render();
+  };
+  const mapBtn = el(`<button class="btn btn-secondary">${t().groupBackBtn}</button>`);
+  mapBtn.onclick = ()=>{ view='map'; render(); };
+  btnRow.appendChild(againBtn); btnRow.appendChild(mapBtn);
+  stage.appendChild(btnRow);
+}
+
+/* ---------------- For Instructors ---------------- */
+function renderInstructors(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='map'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>🎓 ${t().instructors}</h2>`));
+  stage.appendChild(el(`<p class="lead">${t().instructorsIntro}</p>`));
+
+  function section(title, body, color){
+    const box = el(`<div style="border:2px solid ${color}66; background:${color}14; border-radius:14px; padding:14px 16px; margin-bottom:12px;">
+        <h3 style="margin:0 0 8px; font-size:1.05rem;">${title}</h3>
+      </div>`);
+    if(Array.isArray(body)){
+      const ul = el(`<ul style="margin:0; padding-inline-start:20px; font-size:.92rem; line-height:1.6; opacity:.85;"></ul>`);
+      body.forEach(line=> ul.appendChild(el(`<li>${escapeHtml(line)}</li>`)));
+      box.appendChild(ul);
+    } else {
+      box.appendChild(el(`<p style="margin:0; font-size:.92rem; line-height:1.6; opacity:.85;">${escapeHtml(body)}</p>`));
+    }
+    return box;
+  }
+
+  stage.appendChild(section(t().instructorsPedagogyTitle, t().instructorsPedagogy, '#8B5CF6'));
+  stage.appendChild(section(t().instructorsScoringTitle, t().instructorsScoring, '#2EC4F1'));
+  stage.appendChild(section(t().instructorsTierTitle, t().instructorsTier, '#FFB627'));
+  stage.appendChild(section(t().instructorsClassroomTitle, t().instructorsClassroom, '#1FD980'));
+  stage.appendChild(section(t().instructorsPrivacyTitle, t().instructorsPrivacy, '#FF5C8A'));
+}
+
+function renderPrintStudio(stage){
+  const backBtn = el(`<button class="btn btn-ghost" style="margin-bottom:12px;">← ${t().back}</button>`);
+  backBtn.onclick = ()=>{ view='map'; render(); };
+  stage.appendChild(backBtn);
+  stage.appendChild(el(`<h2>🖨️ ${t().printStudio}</h2>`));
+  stage.appendChild(el(`<p class="lead">${t().printStudioDesc}</p>`));
+
+  stage.appendChild(el(`<p class="lead" style="margin-bottom:4px;"><strong>${t().printPickType}</strong></p>`));
+  const typeSwitch = el(`<div class="lang-switch print-controls"></div>`);
+  [['letters',t().islandLetters],['numbers',t().islandNumbers],['words',t().islandWords],['sentences',t().islandSentences],['report',t().printReport]].forEach(([val,label])=>{
+    const b = el(`<button type="button">${label}</button>`);
+    if(printType===val) b.classList.add('active');
+    b.onclick = ()=>{ printType=val; render(); };
+    typeSwitch.appendChild(b);
+  });
+  stage.appendChild(typeSwitch);
+
+  if(printType==='report'){
+    const genBtn = el(`<button class="btn btn-primary" style="margin-top:8px;">📋 ${t().printReportBtn}</button>`);
+    stage.appendChild(genBtn);
+    const previewHolder = el(`<div style="margin-top:18px;"></div>`);
+    stage.appendChild(previewHolder);
+    genBtn.onclick = ()=>{
+      const html = buildProgressReport();
+      const wrapper = document.getElementById('printWrapper');
+      if(wrapper) wrapper.innerHTML = html;
+      previewHolder.innerHTML = `<div class="btn-row"><button class="btn btn-primary" id="doPrintBtn">🖨️ ${t().printNow}</button></div>
+        <div style="border:2px dashed var(--line); border-radius:14px; padding:6px 14px; margin-top:10px; max-height:400px; overflow:auto; background:#fff;">${html}</div>`;
+      const doPrintBtn = previewHolder.querySelector('#doPrintBtn');
+      if(doPrintBtn) doPrintBtn.onclick = ()=>{ try{ window.print(); }catch(e){} };
+    };
+    return;
+  }
+
+  if(printType==='words' || printType==='numbers'){
+    const tierRow = el(`<div class="pickrow" style="margin-bottom:12px;"></div>`);
+    [["A",t().tierA],["B",t().tierB],["C",t().tierC]].forEach(([code,label])=>{
+      const c = el(`<div class="pickcard ${state.tier===code?'selected':''}" style="padding:8px;">${label}</div>`);
+      c.onclick = ()=>{ state.tier=code; render(); };
+      tierRow.appendChild(c);
+    });
+    stage.appendChild(tierRow);
+  }
+
+  const items = printType==='letters' ? BANKS[state.lang].letters
+              : printType==='numbers' ? BANKS[state.lang].numbers[state.tier]
+              : printType==='words' ? BANKS[state.lang].words[state.tier]
+              : BANKS[state.lang].sentences;
+
+  stage.appendChild(el(`<p class="lead" style="margin-bottom:4px;"><strong>${t().printPickItems}</strong></p>`));
+  const selectAllBtn = el(`<button class="btn btn-secondary" style="padding:6px 12px; font-size:.8rem; margin-bottom:8px;">${t().printSelectAll}</button>`);
+  stage.appendChild(selectAllBtn);
+
+  const grid = el(`<div class="check-grid"></div>`);
+  items.forEach(item=>{
+    const checked = printSelected.has(item);
+    const itemFont = printType==='numbers' ? 'inherit' : handwritingFontCss(item);
+    const wrap = el(`<label class="check-item" dir="${t().dir}"><input type="checkbox" ${checked?'checked':''}><span style="font-family:${itemFont}; font-size:1.05em;">${escapeHtml(item)}</span></label>`);
+    const cb = wrap.querySelector('input');
+    cb.onchange = ()=>{ if(cb.checked) printSelected.add(item); else printSelected.delete(item); };
+    grid.appendChild(wrap);
+  });
+  stage.appendChild(grid);
+  selectAllBtn.onclick = ()=>{
+    const allSelected = items.every(i=>printSelected.has(i));
+    items.forEach(i=> allSelected ? printSelected.delete(i) : printSelected.add(i));
+    render();
+  };
+
+  stage.appendChild(el(`<p class="lead" style="margin-bottom:4px; margin-top:14px;">${t().printCustomLabel}</p>`));
+  const customArea = el(`<textarea id="printCustom" placeholder="${t().printCustomPh}" dir="${t().dir}"></textarea>`);
+  stage.appendChild(customArea);
+
+  const genBtn = el(`<button class="btn btn-primary" style="margin-top:14px;">🖨️ ${t().printGenerate}</button>`);
+  stage.appendChild(genBtn);
+
+  const previewHolder = el(`<div style="margin-top:18px;"></div>`);
+  stage.appendChild(previewHolder);
+
+  genBtn.onclick = ()=>{
+    const custom = customArea.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    const finalItems = Array.from(printSelected).concat(custom);
+    if(finalItems.length===0) return;
+    const html = buildWorksheet(finalItems);
+    const wrapper = document.getElementById('printWrapper');
+    if(wrapper) wrapper.innerHTML = html;
+    previewHolder.innerHTML = `<div class="btn-row"><button class="btn btn-primary" id="doPrintBtn">🖨️ ${t().printNow}</button></div>
+      <div style="border:2px dashed var(--line); border-radius:14px; padding:6px 14px; margin-top:10px; max-height:360px; overflow:auto; background:#fff;">${html}</div>`;
+    const doPrintBtn = previewHolder.querySelector('#doPrintBtn');
+    if(doPrintBtn) doPrintBtn.onclick = ()=>{ try{ window.print(); }catch(e){} };
+  };
+}
+
+/* ---------------- Drawing guide targets ---------------- */
+// Picks the correct handwriting-model font for a given piece of text.
+function glyphFontFor(text){
+  const isArabicText = /[\u0600-\u06FF]/.test(text||'');
+  if(isArabicText) return { fontFamily:"'Noto Naskh Arabic','Arial',sans-serif", fontWeight:700, isArabicText };
+  if(state.lang==='fr') return { fontFamily:"'Playwrite FR Trad','Baloo 2',cursive", fontWeight:400, isArabicText };
+  return { fontFamily:"'Playwrite US Modern','Baloo 2',cursive", fontWeight:400, isArabicText };
+}
+
+// Works out font size + line-wrapping for a piece of text within maxWidth. Multi-word text
+// (sentences) wraps across lines at a comfortably large, fluent size instead of being
+// squeezed onto one line — this is shared by both the sizing step (renderTraceStage, so the
+// canvas is built tall enough) and the actual drawing step (drawGlyph), so they always agree.
+//
+// Vertical space is based on the browser's ACTUAL measured ascent/descent for this exact
+// text (via TextMetrics.actualBoundingBox*), not a guessed multiplier — a guessed multiplier
+// is what caused French cursive letters with both a tall ascender and a deep descender (like
+// "f", which in French cursive rises above AND drops below the line) to get clipped: no fixed
+// multiplier is safe for every glyph in every font.
+function layoutText(text, maxWidth){
+  text = text || '';
+  const {fontFamily, fontWeight, isArabicText} = glyphFontFor(text);
+  const words = text.split(/\s+/).filter(Boolean);
+  const singleWord = words.length<=1;
+  const len = text.length;
+  let size = singleWord ? (len<=2?150 : len<=5?100 : 70) : 50;
+
+  const scratch = document.createElement('canvas').getContext('2d');
+  scratch.direction = isArabicText ? 'rtl' : 'ltr';
+  function metricsAt(s, sz){ scratch.font = `${fontWeight} ${sz}px ${fontFamily}`; return scratch.measureText(s); }
+  function widthAt(s, sz){ return metricsAt(s, sz).width; }
+
+  function pack(sz){
+    if(singleWord) return [text];
+    const lines = []; let cur = '';
+    words.forEach(word=>{
+      const test = cur ? cur+' '+word : word;
+      if(!cur || widthAt(test, sz) <= maxWidth){ cur = test; }
+      else { lines.push(cur); cur = word; }
+    });
+    if(cur) lines.push(cur);
+    return lines;
+  }
+
+  let lines = pack(size);
+  // Safety: shrink only if a line still doesn't fit even after wrapping (e.g. one very long word).
+  while(size>16 && lines.some(l=> widthAt(l,size) > maxWidth)){ size -= 2; lines = pack(size); }
+
+  // Measure the REAL vertical extent of this exact text at this exact size. Fall back to a
+  // generous estimate only if the browser doesn't support actualBoundingBox metrics.
+  let maxAsc = 0, maxDesc = 0, gotRealMetrics = false;
+  lines.forEach(line=>{
+    const m = metricsAt(line, size);
+    if(typeof m.actualBoundingBoxAscent === 'number' && typeof m.actualBoundingBoxDescent === 'number'
+       && (m.actualBoundingBoxAscent>0 || m.actualBoundingBoxDescent>0)){
+      gotRealMetrics = true;
+      maxAsc = Math.max(maxAsc, m.actualBoundingBoxAscent);
+      maxDesc = Math.max(maxDesc, m.actualBoundingBoxDescent);
+    }
+  });
+  if(!gotRealMetrics){ maxAsc = size*0.9; maxDesc = size*0.5; } // safe fallback for older browsers
+
+  const breathingRoom = size*0.22;
+  const lineHeight = maxAsc + maxDesc + breathingRoom;
+  return { fontFamily, fontWeight, isArabicText, size, lines, lineHeight, maxAsc, maxDesc };
+}
+
+function drawGlyph(ctx, text, w, h, forMask){
+  ctx.clearRect(0,0,w,h);
+  if(!text){ text = "?"; }
+  ctx.fillStyle = forMask ? '#000' : '#2A2118';
+  const layout = layoutText(text, w*0.92);
+  ctx.font = `${layout.fontWeight} ${layout.size}px ${layout.fontFamily}`;
+  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.direction = layout.isArabicText ? 'rtl' : 'ltr';
+  const totalHeight = layout.lines.length * layout.lineHeight;
+  const top = h/2 - totalHeight/2;
+  layout.lines.forEach((line,i)=>{
+    const baselineY = top + i*layout.lineHeight + layout.maxAsc + (layout.lineHeight - layout.maxAsc - layout.maxDesc)/2;
+    ctx.fillText(line, w/2, baselineY);
+  });
+}
+function drawPattern(ctx, key, w, h, forMask, roadWidth){
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle = forMask ? '#000' : '#2A2118';
+  ctx.lineWidth = roadWidth || 30; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath();
+  const margin=40;
+  if(key==='wave'){
+    ctx.moveTo(margin,h/2);
+    for(let x=margin;x<=w-margin;x+=4){ const y = h/2 + Math.sin((x-margin)/40)*h*0.28; ctx.lineTo(x,y); }
+  } else if(key==='zig'){
+    const n=6; ctx.moveTo(margin,h*0.2);
+    for(let i=1;i<=n;i++){ const x = margin + (w-2*margin)*(i/n); const y = i%2? h*0.8 : h*0.2; ctx.lineTo(x,y); }
+  } else if(key==='loop'){
+    const loops=4; ctx.moveTo(margin,h/2);
+    for(let i=0;i<=loops;i++){
+      const cx = margin + (w-2*margin)*(i/loops);
+      ctx.arc(cx, h/2, (h*0.32), Math.PI*0.5, Math.PI*2.5, false);
+    }
+  } else if(key==='diag'){
+    ctx.moveTo(margin,h-margin);
+    for(let i=0;i<5;i++){
+      const x0 = margin + i*((w-2*margin)/5);
+      ctx.lineTo(x0+((w-2*margin)/10), margin);
+      ctx.lineTo(x0+((w-2*margin)/5), h-margin);
+    }
+  } else if(key==='circle'){
+    const n=3; const r = Math.min(h*0.36, (w-2*margin)/(2*n)*0.9);
+    for(let i=0;i<n;i++){
+      const cx = margin + r + i*((w-2*margin-2*r)/(n-1||1));
+      ctx.moveTo(cx+r, h/2);
+      ctx.arc(cx, h/2, r, 0, Math.PI*2, false);
+    }
+  } else if(key==='bridge'){
+    const n=4; ctx.moveTo(margin, h*0.75);
+    for(let i=0;i<n;i++){
+      const x0 = margin + i*((w-2*margin)/n);
+      const x1 = x0 + ((w-2*margin)/n)/2;
+      const x2 = x0 + ((w-2*margin)/n);
+      ctx.quadraticCurveTo(x1, h*0.2, x2, h*0.75);
+    }
+  }
+  ctx.stroke();
+}
+
+/* ---------------- Scoring ---------------- */
+// Younger learners get a bit more tolerance for wobble; older learners are held to a tighter line.
+// Tolerance must cover however wide the learner's pen stroke naturally is (it extends
+// penWidth/2 on each side of a centered line), plus a per-tier slack for hand wobble.
+// Cursive/script fonts have much thinner glyph strokes than the pen, so without this the
+// scorer was flagging normal pen overhang as "overflow" and scores felt inconsistent.
+function toleranceForTier(){
+  const slack = ({A:9, B:6, C:4})[state.tier] || 7;
+  return slack + (state.penWidth||14) * 0.5;
+}
+
+function scoreDrawing(userCanvas, rawGuideCanvas, dilatedGuideCanvas, w, h, toleranceOverride){
+  const ux = userCanvas.getContext('2d').getImageData(0,0,w,h).data;
+  const gx = rawGuideCanvas.getContext('2d').getImageData(0,0,w,h).data;
+  const dgx = dilatedGuideCanvas.getContext('2d').getImageData(0,0,w,h).data;
+  // dilated user (blur user strokes) for coverage check — same tolerance radius as the guide dilation
+  const tolerance = toleranceOverride || toleranceForTier();
+  const tmp = document.createElement('canvas'); tmp.width=w; tmp.height=h;
+  const tctx = tmp.getContext('2d');
+  try{ tctx.filter='blur('+tolerance+'px)'; }catch(e){}
+  tctx.drawImage(userCanvas,0,0);
+  const dux = tctx.getImageData(0,0,w,h).data;
+
+  const STEP = 3; // sample every 3px for perf
+  let guideTotal=0, guideCovered=0, userTotal=0, userNear=0;
+  for(let y=0;y<h;y+=STEP){
+    for(let x=0;x<w;x+=STEP){
+      const idx = (y*w+x)*4;
+      const gA = gx[idx+3];
+      const uA = ux[idx+3];
+      if(gA>40){
+        guideTotal++;
+        if(dux[idx+3]>30) guideCovered++;
+      }
+      if(uA>40){
+        userTotal++;
+        if(dgx[idx+3]>20) userNear++;
+      }
+    }
+  }
+  const coverage = guideTotal? guideCovered/guideTotal : 0;
+  const overflow = userTotal? 1-(userNear/userTotal) : 1;
+  // Penalize attempts that are much thinner/sparser than the target shape needs —
+  // catches "scribbled a little bit in the right area" instead of actually writing it.
+  const completeness = guideTotal? Math.min(1, userTotal/(guideTotal*0.35)) : 0;
+  return { coverage, overflow, userPixelCount:userTotal, guidePixelCount:guideTotal, completeness };
+}
+
+// How much ink a single clean pass over the guide would need, given the current pen width —
+// used to tell a genuine trace apart from a scribble that backtracks over the same area.
+function expectedPathLength(guidePixelCount, penWidth){
+  const pw = Math.max(4, penWidth||14);
+  return Math.max(30, guidePixelCount / pw);
+}
+
+function starsFromScore({coverage, overflow, userPixelCount, completeness, pathRatio}){
+  if(userPixelCount < 25) return 0;
+  if(completeness < 0.4) return coverage>0.5 ? 1 : 0; // traced only a fragment of the target
+  let stars = 0;
+  if(coverage>0.86 && overflow<0.16 && completeness>0.75) stars = 3;
+  else if(coverage>0.64 && overflow<0.32 && completeness>0.55) stars = 2;
+  else if(coverage>0.38 && overflow<0.58) stars = 1;
+  // Coverage/overflow alone can be fooled by a dense scribble that happens to fill the
+  // letter's bounding area — it can look "close enough" without ever actually following the
+  // shape. pathRatio compares how much ink the learner actually laid down against how much a
+  // single clean pass over the guide would need; heavy backtracking/scribbling always uses far
+  // more ink than a real trace, so it caps the star rating even if coverage looked good.
+  if(typeof pathRatio === 'number' && isFinite(pathRatio)){
+    if(pathRatio > 2.6) stars = Math.min(stars, 1);
+    else if(pathRatio > 1.85) stars = Math.min(stars, 2);
+  }
+  return stars;
+}
+
+/* ---------------- boot ---------------- */
+const favicon = document.getElementById('favicon');
+if(favicon) favicon.href = LOGO_DATA_URI;
+boot();
+</script>
+</body>
+</html>
